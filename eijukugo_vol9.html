@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>英熟語フラッシュカード 第9回</title>
+<style>@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600;700&family=Zen+Maru+Gothic:wght@500;700&display=swap');
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0;
+  font-family: 'Zen Maru Gothic', 'Noto Serif JP', serif;
+  background: #15141A;
+  color: #E9E5DC;
+}
+body { min-height: 100vh; }
+
+#pbar { position: sticky; top: 0; height: 4px; background: #2A2832; z-index: 50; }
+#pfill { height: 100%; width: 0%; background: linear-gradient(90deg,#E2A24A,#E0796B); transition: width .3s; }
+
+#hdr {
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 10px;
+  padding: 14px 18px;
+  background: #1B1A22; color: #E9E5DC;
+  border-bottom: 1px solid #2A2832;
+}
+.hl { display: flex; align-items: center; gap: 10px; }
+.badge {
+  background: #E2A24A; color: #1B1A22; font-weight: 700;
+  padding: 3px 10px; border-radius: 20px; font-size: 13px;
+  letter-spacing: .03em;
+}
+.htitle { font-size: 16px; font-weight: 700; color: #F2EFE7; }
+.hr { display: flex; align-items: center; gap: 16px; }
+.scbox { display: flex; gap: 14px; font-size: 14px; align-items: center; }
+.sc-ok { color: #7BD992; font-weight: 700; font-size: 16px; }
+.sc-ng { color: #ED8779; font-weight: 700; font-size: 16px; }
+.sc-lbl { color: #8B8798; }
+.sc-pos { color: #E9E5DC; font-weight: 600; font-size: 13px; background: #2A2832; padding: 3px 10px; border-radius: 14px; }
+
+#main { max-width: 700px; margin: 0 auto; padding: 22px 16px 60px; }
+
+.qcard {
+  background: #1E1D26; border: 1px solid #2E2C38; border-radius: 14px;
+  padding: 22px 20px; box-shadow: 0 4px 18px rgba(0,0,0,.35);
+  position: relative;
+}
+.qmeta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; gap: 10px; }
+.qmeta-left { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.qnum { font-size: 12px; color: #8B8798; font-weight: 600; letter-spacing: .04em; }
+.qtype-badge {
+  font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 12px; color: #14131A;
+}
+.qtype-A { background: #7FAEDB; }
+.qtype-B { background: #92C779; }
+.qtype-C { background: #C9B25A; }
+.qtype-D { background: #E08FA8; }
+.qtype-E { background: #C77FD9; }
+
+.timer-ring-wrap {
+  position: relative; width: 64px; height: 64px; flex-shrink: 0;
+}
+.timer-ring-wrap svg { width: 64px; height: 64px; transform: rotate(-90deg); display: block; }
+.timer-ring-bg { fill: none; stroke: #2A2832; stroke-width: 6; }
+.timer-ring-fg {
+  fill: none; stroke: #E2A24A; stroke-width: 6; stroke-linecap: round;
+  transition: stroke-dashoffset 1s linear, stroke .3s;
+}
+.timer-ring-wrap.low .timer-ring-fg { stroke: #ED8779; }
+.timer-num {
+  position: absolute; top: 0; left: 0; width: 64px; height: 64px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Noto Serif JP', serif; font-weight: 700; font-size: 19px;
+  color: #F2EFE7;
+}
+.timer-ring-wrap.low .timer-num { color: #ED8779; }
+.timer-caption { font-size: 10px; color: #6F6B7C; text-align: center; margin-top: 2px; }
+
+.audio-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #2A2832; color: #F2EFE7; border: 1px solid #3A3745; border-radius: 20px;
+  padding: 7px 16px; font-size: 13px; font-weight: 600; cursor: pointer;
+  margin-bottom: 16px; transition: background .2s;
+}
+.audio-btn:hover { background: #353240; }
+.audio-btn:disabled { opacity: .5; cursor: default; }
+
+.sentence {
+  font-family: 'Noto Serif JP', serif; font-size: 17px; line-height: 1.85;
+  color: #EDEAE2; margin-bottom: 18px;
+}
+.blank-input {
+  font-family: 'Noto Serif JP', serif; font-size: 15px;
+  border: 1px solid #3A3745; border-bottom: 2px solid #E2A24A; background: #2A2832;
+  padding: 2px 8px; margin: 0 5px; text-align: center;
+  color: #C7C3D0; outline: none; border-radius: 4px;
+}
+input.blank-fill {
+  font-family: 'Noto Serif JP', serif; font-size: 16px;
+  border: 1px solid #3A3745; border-bottom: 2px solid #E2A24A; background: #2A2832;
+  padding: 2px 8px; margin: 0 5px; min-width: 110px; text-align: center;
+  color: #F2EFE7; outline: none; border-radius: 4px;
+}
+input.blank-fill:focus { background: #353240; }
+input.blank-fill.correct { border-color: #6FBF73; background: #1E3320; color: #8FDE94; font-weight: 700; }
+input.blank-fill.wrong   { border-color: #E2776A; background: #3B2220; color: #F0958A; text-decoration: line-through; }
+
+.dict-textarea {
+  width: 100%; font-family: 'Noto Serif JP', serif; font-size: 16px; line-height: 1.7;
+  border: 1px solid #3A3745; border-bottom: 2px solid #E2A24A; background: #2A2832;
+  padding: 10px 12px; color: #F2EFE7; outline: none; border-radius: 8px; resize: vertical; min-height: 64px;
+}
+.dict-textarea:focus { background: #353240; }
+.dict-textarea.correct { border-color: #6FBF73; background: #1E3320; color: #8FDE94; }
+.dict-textarea.wrong   { border-color: #E2776A; background: #3B2220; color: #F0958A; }
+
+.choices { display: flex; flex-direction: column; gap: 9px; margin-bottom: 6px; }
+.choice-btn {
+  font-family: 'Noto Serif JP', serif; text-align: left; font-size: 15px;
+  padding: 11px 14px; border: 1.5px solid #2E2C38; border-radius: 9px;
+  background: #232230; cursor: pointer; transition: all .15s; color: #E9E5DC;
+}
+.choice-btn:hover:not(:disabled) { border-color: #E2A24A; background: #2A2832; }
+.choice-btn.selected { border-color: #E2A24A; background: #2A2832; font-weight: 700; }
+.choice-btn.correct-choice { border-color: #6FBF73; background: #1E3320; color: #8FDE94; font-weight: 700; }
+.choice-btn.wrong-choice { border-color: #E2776A; background: #3B2220; color: #F0958A; text-decoration: line-through; }
+.choice-btn:disabled { cursor: default; }
+
+.eu {
+  display: inline; padding: 1px 3px; border-bottom: 2px solid #6F6B7C; cursor: pointer;
+  border-radius: 3px; transition: all .15s;
+}
+.eu:hover:not(.locked) { background: #2A2832; border-bottom-color: #E2A24A; }
+.eu.selected { background: #2A2832; border-bottom-color: #E2A24A; font-weight: 700; }
+.eu.correct-span { border-bottom-color: #E2776A; background: #3B2220; color: #F0958A; }
+.eu-tag {
+  font-size: 10px; font-weight: 700; color: #8B8798; vertical-align: super; margin-right: 1px;
+}
+.err-hint { font-size: 13px; color: #8B8798; margin-bottom: 14px; }
+.err-fix-row { display: flex; gap: 8px; align-items: center; margin-top: 14px; }
+.err-fix-row input {
+  flex: 1; font-family: 'Noto Serif JP', serif; font-size: 15px;
+  border: 1px solid #3A3745; border-bottom: 2px solid #E2A24A; background: #2A2832;
+  padding: 8px 10px; color: #F2EFE7; outline: none; border-radius: 6px;
+}
+.err-fix-row input:disabled { opacity: .8; }
+.err-fix-label { font-size: 12px; color: #8B8798; white-space: nowrap; }
+
+.actions { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+.btn {
+  font-family: 'Zen Maru Gothic', sans-serif; font-weight: 700; font-size: 14px;
+  padding: 10px 22px; border-radius: 24px; border: none; cursor: pointer;
+  transition: all .15s;
+}
+.btn-submit { background: #E2A24A; color: #1B1A22; }
+.btn-submit:hover { background: #EEB868; }
+.btn-submit:disabled { background: #3A3745; color: #6F6B7C; cursor: default; }
+.btn-next { background: #E9E5DC; color: #1B1A22; }
+.btn-next:hover { background: #F8F5EE; }
+
+.feedback { margin-top: 14px; font-size: 14px; font-weight: 700; }
+.feedback.ok  { color: #8FDE94; }
+.feedback.ng  { color: #F0958A; }
+
+.explain-box {
+  margin-top: 12px; padding: 12px 14px; background: #232230; border-radius: 9px;
+  font-size: 14px; color: #C7C3D0; line-height: 1.8; display: none; border-left: 3px solid #E2A24A;
+}
+.explain-box.show { display: block; }
+.explain-box b { color: #F2EFE7; }
+
+.result-wrap { text-align: center; padding: 40px 20px; }
+.result-score { font-size: 56px; font-weight: 700; color: #E2A24A; font-family: 'Noto Serif JP', serif; }
+.result-total { font-size: 20px; color: #8B8798; margin-bottom: 18px; }
+.result-comment { font-size: 22px; font-weight: 700; margin-bottom: 28px; color: #F2EFE7; }
+
+@media (max-width: 480px) {
+  .htitle { font-size: 14px; }
+  .sentence { font-size: 15px; }
+  .timer-ring-wrap { width: 52px; height: 52px; }
+  .timer-ring-wrap svg { width: 52px; height: 52px; }
+  .timer-num { width: 52px; height: 52px; font-size: 15px; }
+}
+</style>
+</head>
+<body>
+<div id="pbar"><div id="pfill"></div></div>
+<div id="hdr">
+  <div class="hl"><span class="badge">第9回</span><span class="htitle">英熟語フラッシュカード</span></div>
+  <div class="hr">
+    <div class="scbox">
+      <span><span class="sc-ok" id="sc-ok">0</span><span class="sc-lbl"> 正解</span></span>
+      <span><span class="sc-ng" id="sc-ng">0</span><span class="sc-lbl"> 不正解</span></span>
+      <span class="sc-pos" id="sc-pos">-</span>
+    </div>
+  </div>
+</div>
+<div id="main"></div>
+
+<audio id="clip" preload="none"></audio>
+
+<script>
+// ===================== データ (全114問プール) =====================
+const TIME_LIMIT = 20; // 秒
+const QUESTIONS_PER_TEST = 20; // 1回のテストの出題数
+
+const ITEMS = [
+  {id:"9-1.mp3-1", file:"9-1.mp3", idiom:"take a good look at", sent:"The baby has now started to take a good look at anything presented to him before taking it.", meaning:"〜をよく見る、じっくり見る", trans:"その赤ちゃんは、渡された物を手に取る前に、じっくり見るようになった。", note:"look at ではなく a good look at のように a good を挟むことで「じっくり」という強調が加わる。", wrong:["take a good look on","take a good view at","take a close look for"], start:"00.00.0", end:"00.05.8"},
+  {id:"9-1.mp3-2", file:"9-1.mp3", idiom:"feel like", sent:"I want you to just imagine what it would feel like to live in extreme poverty as he did.", meaning:"〜のような感じがする（what it would feel like to do＝〜するとどんな感じか）", trans:"彼のように極度の貧困の中で暮らすことがどんな感じか、想像してみてほしい。", note:"what it would feel like to do で「〜するとどんな感じか」という決まった形。feel like doing（〜したい気分だ）と混同しないこと。", wrong:["feel as","feel about","look like"], start:"00.05.8", end:"00.13.1"},
+  {id:"9-1.mp3-3", file:"9-1.mp3", idiom:"go on a diet", sent:"What do you go on a diet for, if you end up losing your health?", meaning:"ダイエットをする", trans:"結局健康を損なうのなら、何のためにダイエットをするのか。", note:"go on a diet は「ダイエットを始める・する」。be on a diet（ダイエット中である）との違いに注意。", wrong:["go in a diet","go to a diet","go for a diet"], start:"00.13.1", end:"00.17.8"},
+  {id:"9-1.mp3-4", file:"9-1.mp3", idiom:"have no idea", sent:"I have no idea what to buy Mary for her birthday.", meaning:"全く分からない", trans:"メアリーの誕生日に何を買えばいいのか全く分からない。", note:"I don't know よりも「見当もつかない」という強い意味合いを持つ。", wrong:["have no ideas","have any idea","take no idea"], start:"00.17.8", end:"00.22.2"},
+  {id:"9-1.mp3-5", file:"9-1.mp3", idiom:"could use", sent:"I've been trying in vain to repair this for hours. I could use some help from someone.", meaning:"〜があるとありがたい、〜が欲しい（口語表現）", trans:"何時間もこれを直そうとしているが無駄だった。誰かに手伝ってもらえるとありがたい。", note:"仮定法の could を使うことで「〜が欲しい」を控えめ・婉曲に伝える口語表現。", wrong:["could used","would use","should use"], start:"00.22.2", end:"00.29.1"},
+  {id:"9-1.mp3-6", file:"9-1.mp3", idiom:"How come", sent:"How come you didn't show up for the morning practice yesterday?", meaning:"どうして、なぜ", trans:"どうして昨日の朝の練習に来なかったの？", note:"How come の後は疑問文の語順にならず平叙文の語順になる点が Why との大きな違い。", wrong:["How comes","Why come","What come"], start:"00.29.1", end:"00.33.7"},
+  {id:"9-1.mp3-7", file:"9-1.mp3", idiom:"Take your time", sent:"Take your time walking down these steps: they're very slippery after the rain.", meaning:"ゆっくりで構いません、あわてなくていい", trans:"この階段を降りるときは、慌てずゆっくりで。雨の後はとても滑りやすいので。", note:"相手を気遣う定型表現。命令文だが「ゆっくりどうぞ」という柔らかいニュアンス。", wrong:["Take your times","Take a time","Take the time"], start:"00.33.7", end:"00.39.8"},
+  {id:"9-1.mp3-8", file:"9-1.mp3", idiom:"take it easy", sent:"You've been very busy the whole week; maybe it's best to take it easy over the weekend.", meaning:"気楽にやる、のんびりする", trans:"一週間ずっと忙しかったのだから、週末はのんびりするのが一番かもしれない。", note:"「気楽にやる、無理しない」の意。別れ際の挨拶として使われることもある。", wrong:["take it easily","take it slow","make it easy"], start:"00.39.8", end:"00.46.9"},
+  {id:"9-1.mp3-9", file:"9-1.mp3", idiom:"My pleasure", sent:"“Thank you very much for your help. I really appreciate it.” “My pleasure.”", meaning:"どういたしまして（お礼への返答）", trans:"「手伝ってくれて本当にありがとう。感謝します」「どういたしまして」", note:"You're welcome よりもやや丁寧でフォーマルな響きを持つ返答。", wrong:["My pleasures","My honor","No problems"], start:"00.46.9", end:"00.53.3"},
+  {id:"9-1.mp3-10", file:"9-1.mp3", idiom:"had a hard time", sent:"My brother said he had a hard time making himself understood in English the other day.", meaning:"〜するのに苦労した（have a hard time doing）", trans:"兄（弟）は先日、英語で自分の言いたいことを理解してもらうのに苦労したと言っていた。", note:"have a hard time の後には動名詞（-ing）が続く点に注意。", wrong:["had a hardly time","had hard time","has a hard time"], start:"00.53.3", end:"01.00.0"},
+  {id:"9-1.mp3-11", file:"9-1.mp3", idiom:"see a lot of each other", sent:"I don't see much of him now, but we used to see a lot of each other.", meaning:"互いによく会う", trans:"今は彼にあまり会わないが、以前はよくお互いに会っていたものだ。", note:"see much of him（彼によく会う）と対象が違う点に注意。", wrong:["see much of each other","see a lot each other","see a lot of the other"], start:"01.00.0", end:"01.04.9"},
+  {id:"9-1.mp3-12", file:"9-1.mp3", idiom:"under the impression", sent:"If you're under the impression that this used car is a good buy, think again.", meaning:"〜だと思い込んでいる", trans:"この中古車がお買い得だと思い込んでいるなら、考え直した方がいい。", note:"under the impression that... の形で、後ろに that 節を伴うことが多い。", wrong:["under an impression","on the impression","under the impress"], start:"01.04.9", end:"01.11.1"},
+  {id:"9-1.mp3-13", file:"9-1.mp3", idiom:"help yourself to", sent:"Please make yourself at home and help yourself to anything in the fridge.", meaning:"〜を自由に取って食べる[飲む]", trans:"どうぞくつろいでください、冷蔵庫の中のものは何でも自由に取って食べてください。", note:"toの後には飲食物などの名詞が来る。主語に応じて再帰代名詞を変える。", wrong:["help you to","help yourself for","help itself to"], start:"01.11.1", end:"01.16.8"},
+  {id:"9-1.mp3-14", file:"9-1.mp3", idiom:"I'm afraid not", sent:"“Do you think you'll be finished with this by the early evening?” “No, I'm afraid not.”", meaning:"残念ながら違います、そうではないと思います", trans:"「これは夕方早くまでに終わりそう？」「いや、残念だけど無理だと思う」", note:"否定の答えを丁寧・遠慮がちに伝える表現。肯定の I'm afraid so と対で覚えるとよい。", wrong:["I'm afraid so","I'm not afraid","I'm sorry not"], start:"01.16.8", end:"01.23.8"},
+  {id:"9-1.mp3-15", file:"9-1.mp3", idiom:"treat ourselves to", sent:"Since we've done a good job, let's treat ourselves to something special this evening.", meaning:"自分（たち）にご褒美として〜を与える", trans:"いい仕事をしたのだから、今晩は自分たちにご褒美として何か特別なものを楽しもう。", note:"主語に応じて再帰代名詞の形を変える必要がある。", wrong:["treat ourselves on","treat ourselves for","treat yourself to"], start:"01.23.8", end:"01.29.8"},
+  {id:"9-1.mp3-16", file:"9-1.mp3", idiom:"fed up with", sent:"We were completely fed up with all those traffic jams during the “Golden Week” holidays.", meaning:"〜にうんざりしている", trans:"ゴールデンウィークの間、あの渋滞にはすっかりうんざりしていた。", note:"標準的には fed up with。fed up ofは非標準的。", wrong:["fed up for","fed up of","filled up with"], start:"01.29.8", end:"01.36.6"},
+  {id:"9-1.mp3-17", file:"9-1.mp3", idiom:"come to think of it", sent:"I thought of visiting him, but come to think of it, he's been studying in America for some time.", meaning:"そういえば、考えてみると", trans:"彼を訪ねようかと思ったが、考えてみれば、彼はしばらくアメリカで勉強しているのだった。", note:"文中に挿入的に使われる決まり文句。ofをaboutにしないよう注意。", wrong:["come to think about it","come to think it","coming to think of it"], start:"01.36.6", end:"01.44.3"},
+  {id:"9-1.mp3-18", file:"9-1.mp3", idiom:"thought of", sent:"The film director was highly thought of by most critics.", meaning:"〜と見なされる、評価される（be highly thought of＝高く評価されている）", trans:"その映画監督は、ほとんどの評論家から高く評価されていた。", note:"受動態 be thought of の形で使い、副詞を伴って評価の程度を表すことが多い。", wrong:["thought at","thought about of","think of"], start:"01.44.3", end:"01.48.5"},
+  {id:"9-1.mp3-19", file:"9-1.mp3", idiom:"Legend has it", sent:"Legend has it that there used to live kappa, imaginary creatures, in the river around here.", meaning:"〜という伝説がある", trans:"この辺りの川にはかつて河童という想像上の生き物が住んでいたという伝説がある。", note:"Legend has it that... という決まった構文。haveではなくhasを使う点に注意。", wrong:["Legend have it","Legends has it","Legend is it"], start:"01.48.5", end:"01.55.8"},
+  {id:"9-1.mp3-20", file:"9-1.mp3", idiom:"Here we are", sent:"Here we are at the end of the line. This is where I've wanted to be for a long time.", meaning:"さあ、着いた（到着・発見などの場面で使う表現）", trans:"さあ、着いた、終点だ。ここが、私がずっと来たかった場所なんだ。", note:"到着や発見の場面で使う定番表現。文脈によって訳が変わる。", wrong:["Here we is","Here are we","Here we be"], start:"01.55.8", end:"02.01.9"},
+  {id:"9-2.mp3-1", file:"9-2.mp3", idiom:"hit it off", sent:"John and I hit it off from the moment we met in college five years ago.", meaning:"意気投合する", trans:"ジョンと私は、5年前に大学で出会った瞬間から意気投合した。", note:"前置詞なしで hit it off。相手と気が合うことを表すカジュアルな表現。", wrong:["hit off it","hit it up","hit it out"], start:"00.00.0", end:"00.04.2"},
+  {id:"9-2.mp3-2", file:"9-2.mp3", idiom:"Watch your step", sent:"Watch your step, everyone! It's dark and very slippery in here.", meaning:"足元に気をつけて", trans:"みなさん、足元に気をつけて！ここは暗くてとても滑りやすいです。", note:"注意を促す命令文の定型表現。stepは単数形で使う。", wrong:["Watch your steps","Watch your feet","Look your step"], start:"00.04.2", end:"00.10.1"},
+  {id:"9-2.mp3-3", file:"9-2.mp3", idiom:"give my best regards to", sent:"Please don't forget to give my best regards to your father.", meaning:"〜によろしく伝える", trans:"お父様によろしくお伝えすることをお忘れなく。", note:"regardsは複数形で使う決まった表現。", wrong:["give my best regard to","give my best regards for","send my best regards on"], start:"00.10.1", end:"00.14.7"},
+  {id:"9-2.mp3-4", file:"9-2.mp3", idiom:"You're kidding", sent:"“Oh, no! I forgot to bring the box.” “You're kidding. We don't have time to go back home to get it.”", meaning:"冗談でしょう、うそでしょう", trans:"「しまった！箱を持ってくるのを忘れた」「うそでしょう。取りに戻る時間はないよ」", note:"驚きや信じられない気持ちを表す口語表現。", wrong:["You kidding","You're kidding me on","You're kidded"], start:"00.14.7", end:"00.23.1"},
+  {id:"9-2.mp3-5", file:"9-2.mp3", idiom:"susceptible to", sent:"Our brain is especially susceptible to temptation when we're feeling bad or sad.", meaning:"〜の影響を受けやすい", trans:"私たちの脳は、気分が悪かったり悲しかったりするとき、特に誘惑の影響を受けやすい。", note:"be susceptible to の後には名詞が来る。前置詞はto。", wrong:["susceptible for","susceptible with","susceptive to"], start:"00.23.1", end:"00.30.1"},
+  {id:"9-2.mp3-6", file:"9-2.mp3", idiom:"at odds with", sent:"I'm afraid what he's been saying is completely at odds with what he's been doing.", meaning:"〜と食い違っている、対立している", trans:"彼が言い続けていることは、していることと完全に食い違っていると思う。", note:"oddsは常に複数形。", wrong:["at odd with","at odds for","in odds with"], start:"00.30.1", end:"00.35.7"},
+  {id:"9-2.mp3-7", file:"9-2.mp3", idiom:"is committed to", sent:"My father is a policeman and is committed to the safety and security of society.", meaning:"〜に尽力している、専念している", trans:"私の父は警察官で、社会の安全と治安に尽力している。", note:"be committed to の後には名詞または動名詞が来る。", wrong:["is commit to","is committed for","is committing at"], start:"00.35.7", end:"00.42.0"},
+  {id:"9-2.mp3-8", file:"9-2.mp3", idiom:"here to stay", sent:"Whether you love or hate it, AI is definitely here to stay.", meaning:"定着している、これからも存在し続ける", trans:"好きでも嫌いでも、AIは間違いなくこれからも存在し続ける。", note:"be here to stay で「一時的な流行ではなく定着した」ことを表す。", wrong:["here to remain","here for stay","here to stayed"], start:"00.42.0", end:"00.47.7"},
+  {id:"9-2.mp3-9", file:"9-2.mp3", idiom:"are liable to", sent:"Those who have difficulty sleeping well are liable to wake up in the middle of the night.", meaning:"〜しがちである、〜する傾向がある", trans:"よく眠れない人は、夜中に目が覚めがちだ。", note:"be liable to do で「〜しやすい」。好ましくないことに使われやすい。", wrong:["are liable for","are liable of","are liably to"], start:"00.47.7", end:"00.53.8"},
+  {id:"9-2.mp3-10", file:"9-2.mp3", idiom:"been intent on", sent:"The politician who was arrested for vote buying seemed to have been intent on reelection.", meaning:"〜に熱心である、〜しようと決意している", trans:"票の買収で逮捕されたその政治家は、再選に熱心だったようだ。", note:"be intent on の後は名詞または動名詞。前置詞はon。", wrong:["been intent at","been intend on","been intent for"], start:"00.53.8", end:"01.00.7"},
+  {id:"9-2.mp3-11", file:"9-2.mp3", idiom:"was no match for", sent:"I was no match for Makoto at Japanese chess, and he beat me in three games in a row.", meaning:"〜に全くかなわなかった", trans:"私は将棋でマコトに全くかなわず、彼は3連勝で私を負かした。", note:"be no match for で「〜に匹敵しない、かなわない」。", wrong:["was no match to","was not match for","was no matched for"], start:"01.00.7", end:"01.06.8"},
+  {id:"9-2.mp3-12", file:"9-2.mp3", idiom:"vulnerable to", sent:"She's very vulnerable to criticism, so don't say anything that might upset her further.", meaning:"〜に対して弱い、傷つきやすい", trans:"彼女は批判にとても弱いので、これ以上彼女を動揺させるようなことは言わない方がいい。", note:"be vulnerable to の後には名詞。", wrong:["vulnerable for","vulnerable with","vulnerous to"], start:"01.06.8", end:"01.13.5"},
+  {id:"9-2.mp3-13", file:"9-2.mp3", idiom:"is eligible for", sent:"Any customer who comes in the store today is eligible for the discount.", meaning:"〜の資格がある", trans:"今日来店したお客様は誰でも割引の対象となる。", note:"be eligible for の後は名詞。be eligible to doの形もある。", wrong:["is eligible with","is eligible on","is illegible for"], start:"01.13.5", end:"01.19.2"},
+  {id:"9-2.mp3-14", file:"9-2.mp3", idiom:"is worth seeing", sent:"Although it lasts almost three hours, we all agree this movie is worth seeing many times.", meaning:"見る価値がある（be worth doing）", trans:"3時間近くかかるが、この映画は何度も見る価値があると私たちは皆思っている。", note:"be worth の後は動名詞（-ing）。不定詞にしないよう注意。", wrong:["is worth to see","is worthy seeing","is worthful seeing"], start:"01.19.2", end:"01.26.1"},
+  {id:"9-2.mp3-15", file:"9-2.mp3", idiom:"is out to", sent:"I'm under the impression that that guy is out to make money at our expense.", meaning:"〜しようと意図している、〜しようと狙っている", trans:"あの男は私たちを犠牲にして金を稼ごうとしているのだと私は思っている。", note:"be out to do で「〜しようと企んでいる」というやや否定的なニュアンスを持つ。", wrong:["is out for to","is out on to","is out at"], start:"01.26.1", end:"01.32.5"},
+  {id:"9-2.mp3-16", file:"9-2.mp3", idiom:"was all ears", sent:"The topic the speaker talked on was something I'm very interested in, so I was all ears.", meaning:"熱心に耳を傾けていた", trans:"その講演者が話していた話題は私がとても興味を持っているものだったので、私は熱心に耳を傾けていた。", note:"be all ears は「一生懸命聞く」という口語的な決まり文句。", wrong:["was all ear","was all years","were all ears"], start:"01.32.5", end:"01.39.3"},
+  {id:"9-2.mp3-17", file:"9-2.mp3", idiom:"was beside herself with", sent:"At the news that she'd passed the entrance exam, she was beside herself with joy.", meaning:"〜で我を忘れるほどだった", trans:"彼女が入学試験に合格したという知らせを聞いて、彼女は嬉しさのあまり我を忘れた。", note:"主語に応じて代名詞を変える。", wrong:["was beside himself with","was beside herself for","was besides herself with"], start:"01.39.3", end:"01.45.5"},
+  {id:"9-2.mp3-18", file:"9-2.mp3", idiom:"cut out to be", sent:"I'm not good at math, so probably I'm not cut out to be a scientist.", meaning:"〜に向いている、適性がある", trans:"私は数学が苦手なので、おそらく科学者に向いていないだろう。", note:"通常は否定文でよく使われる。", wrong:["cut out for be","cut out to being","cutting out to be"], start:"01.45.5", end:"01.51.6"},
+  {id:"9-2.mp3-19", file:"9-2.mp3", idiom:"were all the rage", sent:"How long ago was it that the Harry Potter novels were all the rage?", meaning:"大流行していた", trans:"ハリー・ポッターの小説が大流行していたのはどれくらい前のことだったか。", note:"rageは単数扱い。", wrong:["were all the rages","was all the rage","were all in rage"], start:"01.51.6", end:"01.58.0"},
+  {id:"9-2.mp3-20", file:"9-2.mp3", idiom:"account for", sent:"The study was unable to account for the effects of stressful events on emotion.", meaning:"〜を説明する、（原因として）〜の割合を占める", trans:"その研究は、ストレスの多い出来事が感情に与える影響を説明することができなかった。", note:"「説明する」と「（数量・割合を）占める」の両方の意味を持つ多義熟語。", wrong:["account of","account to","account with"], start:"01.58.0", end:"02.03.4"},
+  {id:"9-3.mp3-1", file:"9-3.mp3", idiom:"account for", sent:"A research study has found that habits account for about 40 percent of our daily behaviors.", meaning:"〜の割合を占める、〜の原因となる", trans:"ある研究により、習慣が私たちの日常行動の約40パーセントを占めていることが分かった。", note:"account for には「説明する」の意味と「（数量・割合を）占める」の意味があり、ここでは後者。", wrong:["account of","account to","account with"], start:"00.00.0", end:"00.05.9"},
+  {id:"9-3.mp3-2", file:"9-3.mp3", idiom:"allows for", sent:"Moving around the world allows for a new way of seeing things.", meaning:"〜を可能にする、〜を考慮に入れる", trans:"世界中を旅することは、物事の新しい見方を可能にする。", note:"allow for は「（未来の可能性・誤差などを）考慮に入れる」意味でもよく使われる。", wrong:["allows to","allows on","allows of"], start:"00.05.9", end:"00.11.1"},
+  {id:"9-3.mp3-3", file:"9-3.mp3", idiom:"settle for", sent:"We wanted at least 100,000 yen for the project, but had to settle for 80,000 yen.", meaning:"（不本意ながら）〜で妥協する", trans:"そのプロジェクトのために少なくとも10万円欲しかったが、8万円で妥協せざるを得なかった。", note:"settle for は「本来望むものより低い水準で我慢する」というニュアンスを持つ。", wrong:["settle with","settle to","settle on for"], start:"00.11.1", end:"00.19.1"},
+  {id:"9-3.mp3-4", file:"9-3.mp3", idiom:"yearn for", sent:"On a long autumn night, many people yearn for the hometown they left a long time ago.", meaning:"〜を切望する、恋しく思う", trans:"秋の夜長には、多くの人がずっと前に離れた故郷を懐かしく思う。", note:"yearn for は文語的でやや詩的な響きを持つ「切望する」という表現。", wrong:["yearn to","yearn about","yearn on"], start:"00.19.1", end:"00.25.9"},
+  {id:"9-3.mp3-5", file:"9-3.mp3", idiom:"counted for", sent:"Yamada's knowledge of chemistry counted for a great deal in his new position.", meaning:"（a great dealを伴って）大いに役立った、重要だった", trans:"山田の化学の知識は、彼の新しい職務において大いに役立った。", note:"count for a great deal で「大いに役立つ、重要である」。count for little（あまり役に立たない）との対比で覚えるとよい。", wrong:["counted on for","counted to","accounted for"], start:"00.25.9", end:"00.31.5"},
+  {id:"9-3.mp3-6", file:"9-3.mp3", idiom:"cope with", sent:"To help cope with their daily stress, many people take up yoga.", meaning:"〜にうまく対処する", trans:"日々のストレスにうまく対処するため、多くの人がヨガを始める。", note:"cope with は困難な状況にうまく対応することを表す。deal withと似るが、精神的な負担への対処によく使われる。", wrong:["cope for","cope to","cope on"], start:"00.31.5", end:"00.37.3"},
+  {id:"9-3.mp3-7", file:"9-3.mp3", idiom:"coincide with", sent:"We arranged our trip to coincide with the start of baseball season.", meaning:"〜と時期が一致する、重なる", trans:"私たちは野球シーズンの開幕と重なるように旅行の計画を立てた。", note:"coincide with は「（時間・出来事が）同時に起こる」ことを表す。", wrong:["coincide to","coincide on","coincide for"], start:"00.37.3", end:"00.42.8"},
+  {id:"9-3.mp3-8", file:"9-3.mp3", idiom:"comply with", sent:"Needless to say, everybody who opens a business has to comply with the law.", meaning:"〜に従う", trans:"言うまでもなく、事業を始める人は誰でも法律に従わなければならない。", note:"comply with の主語は通常、規則に従う「人」。obey the lawとほぼ同義だが、より形式的な文脈で使われる。", wrong:["comply to","comply for","comply on"], start:"00.42.8", end:"00.48.8"},
+  {id:"9-3.mp3-9", file:"9-3.mp3", idiom:"dispense with", sent:"I think she can dispense with any more advice.", meaning:"〜なしで済ませる、〜を省く", trans:"彼女はもうこれ以上の助言はなくても済むと思う。", note:"dispense with は「不要なものを省く、なしで済ませる」の意味。dispense（分配する）とは意味が異なる点に注意。", wrong:["dispense of","dispense from","dispense in"], start:"00.48.8", end:"00.53.2"},
+  {id:"9-3.mp3-10", file:"9-3.mp3", idiom:"attend to", sent:"Katy took a few days off to attend to her personal matters.", meaning:"〜に対応する、〜の世話をする", trans:"ケイティは私用に対応するため数日間休みを取った。", note:"attend to は「対応する、世話をする」。attend（出席する）とは前置詞の有無で意味が変わる点に注意。", wrong:["attend for","attend on","attend with"], start:"00.53.2", end:"00.57.9"},
+  {id:"9-3.mp3-11", file:"9-3.mp3", idiom:"aspired to", sent:"As a girl, Eri aspired to a career in medicine, but changed her mind later.", meaning:"〜を熱望した", trans:"少女の頃、エリは医療の道に進むことを熱望していたが、後に考えを変えた。", note:"aspire to の後には名詞（キャリア・地位など）や不定詞（to be〜）が続く。", wrong:["aspired for","aspired on","aspired at"], start:"00.57.9", end:"01.04.5"},
+  {id:"9-3.mp3-12", file:"9-3.mp3", idiom:"submit to", sent:"After two months of intense struggle, it seemed as if he'd decided to submit to his fate.", meaning:"〜に屈する、服従する", trans:"2か月にわたる激しい葛藤の末、彼は自分の運命に身を委ねる決心をしたようだった。", note:"submit to は「（力や運命に）屈する」の意味。submit a report（報告書を提出する）のsubmitとは用法が異なる。", wrong:["submit for","submit on","submit at"], start:"01.04.5", end:"01.11.3"},
+  {id:"9-3.mp3-13", file:"9-3.mp3", idiom:"consented to", sent:"If they had been asked individually nobody would have consented to this crazy proposal.", meaning:"〜に同意した", trans:"個別に尋ねられていたら、誰もこの無謀な提案に同意しなかっただろう。", note:"consent to の後には名詞が来る。agree toと近いが、consentはより形式的で公式な同意を表すことが多い。", wrong:["consented for","consented on","consented with"], start:"01.11.3", end:"01.17.8"},
+  {id:"9-3.mp3-14", file:"9-3.mp3", idiom:"deal in", sent:"Today many ordinary people deal in stocks via the internet.", meaning:"〜を商う、取引する", trans:"今日、多くの一般の人々がインターネットを通じて株を取引している。", note:"deal in は「（商品などを）取り扱う、商う」の意味。deal with（対処する）と混同しないよう注意。", wrong:["deal on","deal with","deal for"], start:"01.17.8", end:"01.23.1"},
+  {id:"9-3.mp3-15", file:"9-3.mp3", idiom:"persists in", sent:"We won't be able to reach a consensus if he persists in his demand.", meaning:"〜に固執する", trans:"彼が自分の要求に固執し続けるなら、私たちは合意に達することができないだろう。", note:"persist in の後は名詞または動名詞。persist with も使われるが、persist inがより一般的。", wrong:["persists on","persists for","persists at"], start:"01.23.1", end:"01.28.8"},
+  {id:"9-3.mp3-16", file:"9-3.mp3", idiom:"indulge in", sent:"Alex is now able to indulge in her favorite hobby, knitting, because she retired last month.", meaning:"〜にふける、心ゆくまで楽しむ", trans:"アレックスは先月退職したので、今では大好きな趣味である編み物を心ゆくまで楽しむことができる。", note:"indulge in の後は名詞または動名詞。indulge oneself（自分を甘やかす）という再帰形の使い方もある。", wrong:["indulge on","indulge with","indulge for"], start:"01.28.8", end:"01.35.5"},
+  {id:"9-3.mp3-17", file:"9-3.mp3", idiom:"embarked on", sent:"To deal with the shrinking workforce, Japan has embarked on what is called a robot revolution.", meaning:"〜に乗り出す、着手する", trans:"労働力の減少に対処するため、日本はいわゆるロボット革命に乗り出した。", note:"embark on は新しい事業や計画に「乗り出す」の意味。船に乗り込む（embark）が語源。", wrong:["embarked in","embarked to","embarked at"], start:"01.35.5", end:"01.42.7"},
+  {id:"9-3.mp3-18", file:"9-3.mp3", idiom:"dwell on", sent:"I'd like to dwell on this point further because it's so important.", meaning:"（重要な点について）掘り下げて論じる、詳しく述べる", trans:"この点はとても重要なので、さらに掘り下げてお話ししたいと思います。", note:"dwell on はここでは前向きに「詳しく論じる」の意味で使われている。文脈により「くよくよ考える」という否定的な意味にもなる。", wrong:["dwell in","dwell about","dwell at"], start:"01.42.7", end:"01.47.9"},
+  {id:"9-3.mp3-19", file:"9-3.mp3", idiom:"dwell on", sent:"It is futile to dwell on the problems of today; instead, let's try to have unlimited optimism.", meaning:"（否定的なことを）くよくよ考え続ける", trans:"今日の問題についてくよくよ考えても無駄だ。その代わりに、限りない楽観主義を持つよう努めよう。", note:"同じ dwell on でも文脈によって「前向きに論じる」と「否定的にくよくよ考える」の両方の意味になる点に注意。", wrong:["dwell in","dwell about","dwell at"], start:"01.47.9", end:"01.55.3"},
+  {id:"9-3.mp3-20", file:"9-3.mp3", idiom:"tell on", sent:"The succession of late nights was beginning to tell on his health.", meaning:"〜に（悪）影響を及ぼす", trans:"夜更かしが続いたことが、彼の健康に影響を及ぼし始めていた。", note:"tell on はここでは「（苦労などが）体にこたえる、影響が出る」の意味。「告げ口する」という意味のtell onと区別が必要。", wrong:["tell in","tell of","tell with"], start:"01.55.3", end:"02.00.0"},
+  {id:"9-4.mp3-1", file:"9-4.mp3", idiom:"refrain from", sent:"We should refrain from talking loudly here in the middle of the night.", meaning:"〜を控える、慎む", trans:"私たちは真夜中にここで大声で話すのを控えるべきだ。", note:"refrain from の後は動名詞（-ing）。不定詞ではない点に注意。", wrong:["refrain of","refrain with","refrain for"], start:"00.00.0", end:"00.03.7"},
+  {id:"9-4.mp3-2", file:"9-4.mp3", idiom:"discriminated against", sent:"This author writes in her book about her experience of being discriminated against as a child.", meaning:"差別された", trans:"この著者は、子どもの頃に差別された経験について自身の著書で書いている。", note:"discriminate against で「〜を差別する」。受動態 be discriminated against の形で使われることが多い。", wrong:["discriminated for","discriminated at","discriminated on"], start:"00.03.7", end:"00.11.0"},
+  {id:"9-4.mp3-3", file:"9-4.mp3", idiom:"abide by", sent:"Once you've signed a contract with anyone, you're supposed to abide by it to the letter.", meaning:"〜を守る、順守する", trans:"一度誰かと契約を結んだら、それを一字一句守らなければならない。", note:"abide by の後は規則・約束・法律などが続く。obeyよりもやや形式的。", wrong:["abide with","abide to","abide for"], start:"00.11.0", end:"00.17.7"},
+  {id:"9-4.mp3-4", file:"9-4.mp3", idiom:"work out", sent:"We'd thought the preparations were perfect, but things didn't work out the way we'd expected.", meaning:"うまくいく、（計画などが）望んだ通りになる", trans:"準備は完璧だと思っていたが、物事は思い通りにはいかなかった。", note:"work out は自動詞的に「うまくいく」の意味。目的語を伴う場合は「解決する、算出する」の意味にもなる。", wrong:["work off","work up","work on"], start:"00.17.7", end:"00.24.2"},
+  {id:"9-4.mp3-5", file:"9-4.mp3", idiom:"works out", sent:"James wishes to stay in good shape and works out at a gym three times per week.", meaning:"運動する、トレーニングする", trans:"ジェームズは体型を維持したいと思っており、週に3回ジムでトレーニングをしている。", note:"work out はここでは「運動する」という意味。文脈で「うまくいく」との違いを判断する。", wrong:["works off","works up","works on"], start:"00.24.2", end:"00.30.5"},
+  {id:"9-4.mp3-6", file:"9-4.mp3", idiom:"ruled out", sent:"The police ruled out the possibility that the robber might have entered through the window.", meaning:"〜を除外した、可能性がないとした", trans:"警察は、強盗が窓から侵入した可能性を除外した。", note:"rule out は「（可能性などを）排除する」の意味。ruled in（含める）と対で覚えるとよい。", wrong:["ruled off","ruled up","ruled over"], start:"00.30.5", end:"00.36.9"},
+  {id:"9-4.mp3-7", file:"9-4.mp3", idiom:"singled out", sent:"The investigative committee singled out the direct cause of the incident.", meaning:"〜を選び出した、特定した", trans:"調査委員会はその事件の直接の原因を特定した。", note:"single out は「多くの中から一つを選び出す、名指しする」の意味。", wrong:["singled off","singled up","singled for"], start:"00.36.9", end:"00.42.6"},
+  {id:"9-4.mp3-8", file:"9-4.mp3", idiom:"passed out", sent:"Father passed out last night and was rushed to the hospital by ambulance.", meaning:"気を失った", trans:"父は昨夜気を失い、救急車で病院に運ばれた。", note:"pass out は「意識を失う、気絶する」の意味。faintとほぼ同義。", wrong:["passed off","passed up","passed away"], start:"00.42.6", end:"00.48.4"},
+  {id:"9-4.mp3-9", file:"9-4.mp3", idiom:"missed out on", sent:"Jim said I missed out on something interesting by not going with him to the exhibition.", meaning:"〜を逃した、見逃した", trans:"ジムは、展示会に一緒に行かなかったことで私が面白いものを見逃したと言った。", note:"miss out on の後は名詞や動名詞。「せっかくの機会を逃す」というニュアンスを持つ。", wrong:["missed out to","missed out for","missed off on"], start:"00.48.4", end:"00.55.1"},
+  {id:"9-4.mp3-10", file:"9-4.mp3", idiom:"wind up", sent:"I think it's almost time to wind up this meeting.", meaning:"（会議などを）終える、締めくくる", trans:"そろそろこの会議を終える時間だと思う。", note:"wind up には「（結果的に）〜になる」（wind up doing）という別の重要な意味もある。", wrong:["wind off","wind out","wind down"], start:"00.55.1", end:"00.59.7"},
+  {id:"9-4.mp3-11", file:"9-4.mp3", idiom:"pulled up", sent:"I went into a vegetable patch and pulled up a carrot, but it looked too small for anything.", meaning:"（地面から）引き抜いた", trans:"私は畑に入ってニンジンを引き抜いたが、それは何をするにも小さすぎるように見えた。", note:"pull up は「引き抜く」の意味。「（車が）止まる」という全く別の意味でも使われる。", wrong:["pulled off","pulled out","pulled on"], start:"00.59.7", end:"01.06.5"},
+  {id:"9-4.mp3-12", file:"9-4.mp3", idiom:"pulled up", sent:"Our minibus pulled up in front of a small office building on a busy commercial street.", meaning:"（車が）止まった", trans:"私たちのミニバスは、賑やかな商店街にある小さなオフィスビルの前で止まった。", note:"pull up は乗り物が「止まる」の意味でもよく使われる。「引き抜く」の意味との違いに注意。", wrong:["pulled off","pulled in","pulled on"], start:"01.06.5", end:"01.12.6"},
+  {id:"9-4.mp3-13", file:"9-4.mp3", idiom:"threw up", sent:"After he'd tried several times, Jim finally threw up his hands and gave up the attempt.", meaning:"（his handsを伴い）お手上げの様子をした、あきらめた", trans:"何度か試みた後、ジムはついに両手を上げてその試みをあきらめた。", note:"throw up one's hands で「お手上げだと示す」の意味の慣用表現。「吐く」という意味とは別。", wrong:["threw off","threw out","threw on"], start:"01.12.6", end:"01.19.5"},
+  {id:"9-4.mp3-14", file:"9-4.mp3", idiom:"thrown up", sent:"Hiro became sick soon after dinner and had thrown up several times by midnight.", meaning:"吐いた", trans:"ヒロは夕食後すぐに具合が悪くなり、真夜中までに何度も吐いた。", note:"throw up は「嘔吐する」の意味。vomitのくだけた言い方。", wrong:["thrown off","thrown out","thrown on"], start:"01.19.5", end:"01.25.6"},
+  {id:"9-4.mp3-15", file:"9-4.mp3", idiom:"rounded up", sent:"The law decrees that dogs running loose be rounded up for the safety of the public.", meaning:"一斉に捕獲した、集めた", trans:"法律は、公共の安全のために放し飼いの犬を一斉に捕獲すべきだと定めている。", note:"round up は「（人や動物を）一箇所に集める、捕らえる」の意味。数字を「切り上げる」という意味もある。", wrong:["rounded off","rounded on","rounded out"], start:"01.25.6", end:"01.31.7"},
+  {id:"9-4.mp3-16", file:"9-4.mp3", idiom:"caught on", sent:"This detective story caught on probably because its ending is really surprising.", meaning:"人気が出た、流行した", trans:"この推理小説は、結末が本当に意外だったためおそらく人気が出たのだろう。", note:"catch on は「人気が出る、流行する」の意味。catch on toとは意味が異なる。", wrong:["caught up","caught off","caught out"], start:"01.31.7", end:"01.37.8"},
+  {id:"9-4.mp3-17", file:"9-4.mp3", idiom:"caught on to", sent:"It took a minute before I caught on to what he meant by his joke.", meaning:"〜が分かった、理解した", trans:"彼の冗談が何を意味していたのか私が理解するまでに1分ほどかかった。", note:"catch on to は「（意味などを）理解する」の意味。「流行する」とは別の意味。", wrong:["caught up to","caught off to","caught out to"], start:"01.37.8", end:"01.43.3"},
+  {id:"9-4.mp3-18", file:"9-4.mp3", idiom:"get away with", sent:"You're utterly mistaken if you thought you could cheat on exams and get away with it.", meaning:"（悪事などが）許される、うまく逃げおおせる", trans:"試験でカンニングをしても許されると思っていたのなら、それは大きな間違いだ。", note:"get away with の後には名詞または動名詞（doing）が続く。", wrong:["get away for","get off with","get away by"], start:"01.43.3", end:"01.49.6"},
+  {id:"9-4.mp3-19", file:"9-4.mp3", idiom:"got away with", sent:"Today's newspaper says someone got away with three million yen from a nearby supermarket.", meaning:"（盗品などを持って）まんまと逃げた", trans:"今日の新聞によると、誰かが近くのスーパーから300万円を盗んで逃げたそうだ。", note:"get away with には「（お金や物を盗んで）まんまと持ち逃げする」という意味もある。", wrong:["got away for","got off with","got away by"], start:"01.49.6", end:"01.56.5"},
+  {id:"9-4.mp3-20", file:"9-4.mp3", idiom:"shied away from", sent:"In the interview, the politician shied away from any question concerning his private life.", meaning:"〜を避けた、尻込みした", trans:"インタビューの中で、その政治家は私生活に関するどんな質問も避けた。", note:"shy away from は「（不安や恥ずかしさから）避ける、尻込みする」の意味。", wrong:["shied away of","shied off from","shied away with"], start:"01.56.5", end:"02.02.8"},
+  {id:"9-5.mp3-1", file:"9-5.mp3", idiom:"hung around", sent:"I had to kill a couple of hours the other day, so I hung around in a park nearby.", meaning:"ぶらぶらして時間を過ごした", trans:"先日、2時間ほど時間をつぶさなければならなかったので、近くの公園でぶらぶらして過ごした。", note:"hang around は「特に目的もなくぶらぶらする」の意味。hang out（友人と遊ぶ）と似るが少しニュアンスが異なる。", wrong:["hung about with","hung on","hung up"], start:"00.00.0", end:"00.04.9"},
+  {id:"9-5.mp3-2", file:"9-5.mp3", idiom:"get down to", sent:"Let's get down to business: there's a lot of work to do today.", meaning:"〜に本腰を入れる、取り掛かる", trans:"さあ、本題に入ろう。今日はやることがたくさんある。", note:"get down to business で「本題に入る」という決まった言い方。後ろには名詞または動名詞が続く。", wrong:["get down on","get down with","get down for"], start:"00.04.9", end:"00.10.3"},
+  {id:"9-5.mp3-3", file:"9-5.mp3", idiom:"let down", sent:"He felt let down when she failed to do what she'd promised.", meaning:"がっかりさせた", trans:"彼女が約束したことを守らなかったとき、彼はがっかりした。", note:"let 人 down で「（人を）失望させる」の意味。受動態 feel let down（がっかりする）の形も頻出。", wrong:["let off","let up","let out"], start:"00.10.3", end:"00.15.4"},
+  {id:"9-5.mp3-4", file:"9-5.mp3", idiom:"pull off", sent:"It must have taken a lot of organization and hard work to pull off such a big party.", meaning:"（難しいことを）成し遂げる", trans:"あれほど大きなパーティーを成功させるには、多くの準備と努力が必要だったに違いない。", note:"pull off は「困難なことをうまくやり遂げる」の意味。", wrong:["pull out","pull up","pull through"], start:"00.15.4", end:"00.22.1"},
+  {id:"9-5.mp3-5", file:"9-5.mp3", idiom:"followed through on", sent:"Yui followed through on the promise to return home by ten.", meaning:"（約束などを）最後までやり遂げた", trans:"ユイは10時までに帰宅するという約束を最後まで守り抜いた。", note:"follow through on は「（計画や約束を）最後まで実行する」の意味。", wrong:["followed through for","followed through with","followed up on"], start:"00.22.1", end:"00.27.2"},
+  {id:"9-5.mp3-6", file:"9-5.mp3", idiom:"finds himself", sent:"He says he often finds himself thinking of the woman he parted from a long time ago.", meaning:"気づけば〜している", trans:"彼は、ずっと前に別れた女性のことを気づけばよく考えていると言う。", note:"find oneself doing で「気がつくと〜している」の意味。無意識のうちに何かをしている状況を表す。", wrong:["finds him","finds himself to","found himself on"], start:"00.27.2", end:"00.33.8"},
+  {id:"9-5.mp3-7", file:"9-5.mp3", idiom:"make do with", sent:"Every chef dreams of great produce, but most make do with what is available on the market.", meaning:"〜で済ませる、間に合わせる", trans:"どのシェフも上質な食材を夢見るが、たいていは市場で手に入るもので間に合わせる。", note:"make do with は「（本当は不十分だが）あるもので済ませる」というニュアンス。", wrong:["make do for","make do on","make done with"], start:"00.33.8", end:"00.41.4"},
+  {id:"9-5.mp3-8", file:"9-5.mp3", idiom:"make good", sent:"I'm sure he'll make good in his new job.", meaning:"成功する、出世する", trans:"彼は新しい仕事できっと成功するだろうと確信している。", note:"make good（自動詞的用法）で「成功する」の意味。目的語を伴うと「（約束などを）実行する」という別の意味になる。", wrong:["make well","make good at","made goods"], start:"00.41.4", end:"00.45.8"},
+  {id:"9-5.mp3-9", file:"9-5.mp3", idiom:"made good", sent:"In a year, his landlady made good her warning and evicted him from his room.", meaning:"（警告などを）実行に移した、実現させた", trans:"1年後、彼の大家は警告を実行に移し、彼を部屋から追い出した。", note:"make good + 名詞で「（約束・警告などを）実行する」の意味。自動詞用法と区別する。", wrong:["made good on","made well","made goods"], start:"00.45.8", end:"00.51.0"},
+  {id:"9-5.mp3-10", file:"9-5.mp3", idiom:"make ends meet", sent:"With prices rising, it is becoming harder for anyone to make ends meet these days.", meaning:"収支を合わせる、やりくりする", trans:"物価が上昇する中、近頃は誰にとっても収支を合わせるのが難しくなってきている。", note:"make ends meet は「限られた収入で何とかやりくりする」という決まった表現。endsは複数形。", wrong:["make end meet","make ends met","make ends meat"], start:"00.51.0", end:"00.57.3"},
+  {id:"9-5.mp3-11", file:"9-5.mp3", idiom:"make believe", sent:"As a small child, Fred liked to make believe he was a ninja on a secret mission.", meaning:"〜のふりをする、ごっこ遊びをする", trans:"幼い頃、フレッドは自分が秘密の任務中の忍者であるふりをして遊ぶのが好きだった。", note:"make believe (that)... で「〜だと（空想上で）ふりをする」の意味。子どものごっこ遊びによく使われる。", wrong:["make belief","made believe to","make believes"], start:"00.57.3", end:"01.03.4"},
+  {id:"9-5.mp3-12", file:"9-5.mp3", idiom:"take it for granted that", sent:"Patients tend to take it for granted that a doctor knows everything, but does he?", meaning:"〜を当然のことと思う", trans:"患者は医者が何でも知っていると当然のように思いがちだが、実際はどうだろうか。", note:"take it for granted that... の it は形式目的語で、that以下の内容を指す。", wrong:["take it as granted that","take it for grant that","take it for granting that"], start:"01.03.4", end:"01.10.0"},
+  {id:"9-5.mp3-13", file:"9-5.mp3", idiom:"into account", sent:"Our big mistake was that we hadn't taken the traffic conditions into account.", meaning:"〜を考慮に入れる（take... into account）", trans:"私たちの大きな間違いは、交通状況を考慮に入れていなかったことだった。", note:"take... into account で「〜を考慮する」。take into consideration とほぼ同義。", wrong:["into accounts","in account","on account"], start:"01.10.0", end:"01.15.5"},
+  {id:"9-5.mp3-14", file:"9-5.mp3", idiom:"took hold", sent:"The teacher took hold of the child's hand and led her gently into the classroom.", meaning:"〜をつかんだ（take hold of）", trans:"先生はその子の手をつかみ、優しく教室へ連れて行った。", note:"take hold of で「〜をしっかりつかむ」の意味。ofを忘れないよう注意。", wrong:["took hold on","took holds","took a hold"], start:"01.15.5", end:"01.21.7"},
+  {id:"9-5.mp3-15", file:"9-5.mp3", idiom:"took no notice", sent:"The employer took no notice of his manager's advice and made a mistake.", meaning:"〜に全く注意を払わなかった（take no notice of）", trans:"その雇用主はマネージャーの助言に全く耳を貸さず、ミスを犯した。", note:"take notice of（気づく、注意を払う）の否定形。noを使うことで「全く〜ない」という強い否定になる。", wrong:["took no notices","took no notice on","took not notice"], start:"01.21.7", end:"01.27.6"},
+  {id:"9-5.mp3-16", file:"9-5.mp3", idiom:"took effect", sent:"The revised law concerning privacy took effect on January 1 this year.", meaning:"（法律などが）効力を発した、施行された", trans:"プライバシーに関する改正法は、今年の1月1日に施行された。", note:"take effect は法律や規則が「発効する」ときに使う。", wrong:["took an effect","took effects","took in effect"], start:"01.27.6", end:"01.33.7"},
+  {id:"9-5.mp3-17", file:"9-5.mp3", idiom:"take effect", sent:"In half an hour, the medicine he took began to take effect.", meaning:"効き始めた", trans:"30分後、彼が服用した薬が効き始めた。", note:"ここでは薬の「効果が現れ始める」の意味。法律の「施行」とは対象が異なるが同じ表現。", wrong:["take an effect","take effects","take in effect"], start:"01.33.7", end:"01.38.4"},
+  {id:"9-6.mp3-1", file:"9-6.mp3", idiom:"taking great pains", sent:"Koji seems to be taking great pains to avoid meeting Ryota face to face.", meaning:"大変な苦労をしている、骨を折っている", trans:"コウジはリョウタと直接顔を合わせないよう、かなり苦労しているようだ。", note:"take great pains to do で「〜するために大変な苦労をする」の意味。painsは複数形で使う。", wrong:["taking great pain","taking a great pains","taken great pains"], start:"00.00.0", end:"00.05.5"},
+  {id:"9-6.mp3-2", file:"9-6.mp3", idiom:"keep track of", sent:"His mother told him to keep track of all the money he spent while he was traveling.", meaning:"〜を記録する、把握しておく", trans:"彼の母親は、旅行中に使ったお金をすべて記録しておくよう彼に言った。", note:"keep track of は「（変化する物事の）経過を追う、把握する」の意味。lose track of（見失う）と対で覚える。", wrong:["keep tracks of","keep track on","keep track with"], start:"00.05.5", end:"00.11.0"},
+  {id:"9-6.mp3-3", file:"9-6.mp3", idiom:"keep her company", sent:"She asked me to keep her company until her parents came home.", meaning:"彼女のそばにいて話し相手になる", trans:"彼女は両親が帰宅するまで、そばにいて話し相手になってほしいと私に頼んだ。", note:"keep 人 company で「（人）のそばにいる、話し相手になる」の意味。companyは「会社」ではなく「連れ、同伴」の意味。", wrong:["keep her companion","keep company her","keep her companies"], start:"00.11.0", end:"00.15.8"},
+  {id:"9-6.mp3-4", file:"9-6.mp3", idiom:"keep abreast of", sent:"My father always reads a newspaper attentively to keep abreast of economic trends.", meaning:"〜に遅れずについていく、精通している", trans:"私の父は、経済動向に遅れずついていくため、いつも新聞を熱心に読んでいる。", note:"keep abreast of は「（最新情報などに）遅れずについていく」の意味。abreastは「並んで」という意味の副詞。", wrong:["keep abreast to","keep abreast on","keep abreast with"], start:"00.15.8", end:"00.22.7"},
+  {id:"9-6.mp3-5", file:"9-6.mp3", idiom:"let go of", sent:"Mary let go of her mother's hand when they were skating, and then she had a fall.", meaning:"〜を放す、手放す", trans:"メアリーはスケートをしているときに母親の手を放してしまい、その後転んでしまった。", note:"let go of は「（つかんでいたものを）手放す」の意味。比喩的に「（考えなどを）手放す」という意味でも使われる。", wrong:["let go off","let go on","let go to"], start:"00.22.7", end:"00.28.5"},
+  {id:"9-6.mp3-6", file:"9-6.mp3", idiom:"live up to", sent:"It's not so easy for new companies to live up to customers' expectations.", meaning:"（期待などに）応える", trans:"新しい会社が顧客の期待に応えるのはそう簡単なことではない。", note:"live up to の後には expectations（期待）や reputation（評判）などがよく続く。", wrong:["live up for","live up on","live up with"], start:"00.28.5", end:"00.35.0"},
+  {id:"9-6.mp3-7", file:"9-6.mp3", idiom:"looked her straight in the eye", sent:"He couldn't have looked her straight in the eye if he'd had any evil intent on her.", meaning:"彼女の目をまっすぐ見た", trans:"もし彼女に何か悪意を抱いていたら、彼は彼女の目をまっすぐ見ることはできなかっただろう。", note:"look 人 straight in the eye で「（人）の目をまっすぐ見る」。誠実さや正直さを示す文脈でよく使われる。", wrong:["looked her straight in the eyes","looked her straightly in the eye","looked straight her in the eye"], start:"00.35.0", end:"00.41.2"},
+  {id:"9-6.mp3-8", file:"9-6.mp3", idiom:"holds true", sent:"To try to empathize with others —this basic rule holds true no matter what our belief is.", meaning:"当てはまる、真実である", trans:"他者に共感しようとすること――この基本原則は、私たちの信条が何であれ当てはまる。", note:"hold true は「（規則や原則が）当てはまる、成り立つ」の意味。", wrong:["holds truth","held true to","holds truly"], start:"00.41.2", end:"00.48.9"},
+  {id:"9-6.mp3-9", file:"9-6.mp3", idiom:"come to terms with", sent:"He's trying hard to come to terms with the earlier life he'd lived recklessly.", meaning:"〜を受け入れる、折り合いをつける", trans:"彼は、無謀に生きてきたかつての人生と折り合いをつけようと懸命に努力している。", note:"come to terms with は「（つらい事実や過去などを）受け入れる」という意味の定型表現。", wrong:["come to term with","come into terms with","come to terms on"], start:"00.48.9", end:"00.54.3"},
+  {id:"9-6.mp3-10", file:"9-6.mp3", idiom:"came to light", sent:"It came to light that some athletes had been gambling at illegal casinos.", meaning:"明らかになった", trans:"一部の選手が違法カジノで賭博をしていたことが明らかになった。", note:"come to light は「（隠れていた事実が）明るみに出る」の意味。しばしば It came to light that... の形で使われる。", wrong:["came to lights","came into light","came to light on"], start:"00.54.3", end:"01.00.3"},
+  {id:"9-6.mp3-11", file:"9-6.mp3", idiom:"come of age", sent:"In most countries of the world, people legally come of age at 18.", meaning:"成人に達する", trans:"世界のほとんどの国で、人は法律上18歳で成人に達する。", note:"come of age は「成人に達する、成年に達する」という決まった表現。", wrong:["come of ages","come to age","come in age"], start:"01.00.3", end:"01.06.2"},
+  {id:"9-6.mp3-12", file:"9-6.mp3", idiom:"come in handy", sent:"She studied Chinese, assuming a knowledge of it would come in handy for getting a job.", meaning:"役に立つ", trans:"彼女は、中国語の知識が就職に役立つだろうと考えて中国語を勉強した。", note:"come in handy は「（予期せぬ場面で）役に立つ」というカジュアルな表現。", wrong:["come in hand","come in handily","come into handy"], start:"01.06.2", end:"01.12.7"},
+  {id:"9-6.mp3-13", file:"9-6.mp3", idiom:"fell short of", sent:"We did our best to succeed, but the project fell short of our goal.", meaning:"〜に達しなかった、及ばなかった", trans:"私たちは成功のために全力を尽くしたが、そのプロジェクトは目標に届かなかった。", note:"fall short of は「（期待・目標などに）届かない」の意味。", wrong:["fell short for","fell shorts of","fell short on"], start:"01.12.7", end:"01.18.6"},
+  {id:"9-6.mp3-14", file:"9-6.mp3", idiom:"goes a long way", sent:"Knowing a few words of the country you travel to goes a long way to make your trip more enjoyable.", meaning:"大いに役立つ", trans:"旅行先の国の言葉を少し知っていることは、旅をより楽しいものにするのに大いに役立つ。", note:"go a long way (to do) で「大いに役立つ、大きな効果がある」の意味。", wrong:["goes long way","goes a far way","went a long way"], start:"01.18.6", end:"01.25.8"},
+  {id:"9-6.mp3-15", file:"9-6.mp3", idiom:"paved the way for", sent:"By signing an unfair contract, the boss paved the way for the bankruptcy of his company.", meaning:"〜への道を開いた、準備を整えた", trans:"不公平な契約を結んだことで、その経営者は自社の倒産への道を開いてしまった。", note:"pave the way for は「（後に続く物事のための）下地を作る、道を開く」の意味。良い意味にも悪い意味にも使われる。", wrong:["paved a way for","paved the ways for","paved the way to"], start:"01.25.8", end:"01.32.9"},
+  {id:"9-6.mp3-16", file:"9-6.mp3", idiom:"put it to good use", sent:"The ability to create knowledge and put it to good use is the key characteristic of humans.", meaning:"それをうまく活用する", trans:"知識を生み出し、それをうまく活用する能力こそが、人間の重要な特徴である。", note:"put ... to good use で「〜をうまく活用する」の意味。goodの位置に注意。", wrong:["put it to a good use","put it for good use","put it to well use"], start:"01.32.9", end:"01.40.3"},
+  {id:"9-6.mp3-17", file:"9-6.mp3", idiom:"stands to reason", sent:"It stands to reason that children should be independent of their parents after a certain age.", meaning:"道理にかなっている、当然である", trans:"ある年齢を過ぎたら子どもは親から自立すべきだというのは道理にかなっている。", note:"it stands to reason that... で「〜というのは理にかなっている」という定型表現。", wrong:["stands for reason","stand to reasons","stands to reasoning"], start:"01.40.3", end:"01.46.8"},
+];
+
+const ERROR_ITEMS = {
+  "9-1.mp3-1": {parts:["The baby has now ",["started to","A"]," ",["take a good look on","B"]," anything ",["presented to him","C"]," before ",["taking it","D"],"."], wrong:"B", fix:"take a good look at"},
+  "9-1.mp3-2": {parts:["I want you to ",["just imagine","A"]," what it would ",["feel as","B"]," to live in ",["extreme poverty","C"]," as ",["he did","D"],"."], wrong:"B", fix:"feel like"},
+  "9-1.mp3-3": {parts:[["What do you","A"]," ",["go in a diet","B"]," for, if you ",["end up losing","C"]," ",["your health","D"],"?"], wrong:"B", fix:"go on a diet"},
+  "9-1.mp3-4": {parts:["I ",["have no ideas","A"]," ",["what to buy","B"]," Mary ",["for her","C"]," ",["birthday","D"],"."], wrong:"A", fix:"have no idea"},
+  "9-1.mp3-5": {parts:["I've been ",["trying in vain","A"]," to repair this for hours. I ",["could used","B"]," ",["some help","C"]," from ",["someone","D"],"."], wrong:"B", fix:"could use"},
+  "9-1.mp3-6": {parts:[["How comes","A"]," you ",["didn't show up","B"]," for the ",["morning practice","C"]," ",["yesterday","D"],"?"], wrong:"A", fix:"How come"},
+  "9-1.mp3-7": {parts:[["Take your times","A"]," ",["walking down","B"]," these steps: they're ",["very slippery","C"]," ",["after the rain","D"],"."], wrong:"A", fix:"Take your time"},
+  "9-1.mp3-8": {parts:["You've been ",["very busy","A"]," the whole week; maybe it's best to ",["take it easily","B"]," ",["over the","C"]," ",["weekend","D"],"."], wrong:"B", fix:"take it easy"},
+  "9-1.mp3-9": {parts:["“Thank you ",["very much","A"]," for your help. ",["I really appreciate","B"]," ",["it","C"],".” “",["My pleasures","D"],".”"], wrong:"D", fix:"My pleasure"},
+  "9-1.mp3-10": {parts:["My brother said he ",["had a hardly time","A"]," ",["making himself","B"]," ",["understood in English","C"]," ",["the other day","D"],"."], wrong:"A", fix:"had a hard time"},
+  "9-1.mp3-11": {parts:[["I don't see much of him","A"]," ",["now","B"],", but we ",["used to","C"]," ",["see much of each other","D"],"."], wrong:"D", fix:"see a lot of each other"},
+  "9-1.mp3-12": {parts:["If you're ",["under an impression","A"]," that ",["this used car","B"]," is a ",["good buy","C"],", ",["think again","D"],"."], wrong:"A", fix:"under the impression"},
+  "9-1.mp3-13": {parts:["Please ",["make yourself at home","A"]," and ",["help you to","B"]," ",["anything in","C"]," ",["the fridge","D"],"."], wrong:"B", fix:"help yourself to"},
+  "9-1.mp3-14": {parts:["“Do you think ",["you'll be finished","A"]," with this by the ",["early evening","B"],"?” “",["No","C"],", ",["I'm afraid so","D"],".”"], wrong:"D", fix:"I'm afraid not"},
+  "9-1.mp3-15": {parts:["Since we've ",["done a good job","A"],", let's ",["treat ourselves on","B"]," ",["something special","C"]," ",["this evening","D"],"."], wrong:"B", fix:"treat ourselves to"},
+  "9-1.mp3-16": {parts:["We were ",["completely","A"]," ",["fed up for","B"]," all those ",["traffic jams","C"]," during the “Golden Week” ",["holidays","D"],"."], wrong:"B", fix:"fed up with"},
+  "9-1.mp3-17": {parts:["I ",["thought of visiting him","A"],", but ",["come to think about it","B"],", he's been ",["studying in America","C"]," ",["for some time","D"],"."], wrong:"B", fix:"come to think of it"},
+  "9-1.mp3-18": {parts:[["The film director","A"]," was ",["highly thought at","B"]," by ",["most","C"]," ",["critics","D"],"."], wrong:"B", fix:"highly thought of"},
+  "9-1.mp3-19": {parts:[["Legend have it","A"]," that there ",["used to live","B"]," kappa, ",["imaginary creatures","C"],", in the river ",["around here","D"],"."], wrong:"A", fix:"Legend has it"},
+  "9-1.mp3-20": {parts:[["Here we is","A"]," at ",["the end of the line","B"],". ",["This is where","C"]," ",["I've wanted to be","D"]," for a long time."], wrong:"A", fix:"Here we are"},
+  "9-2.mp3-1": {parts:[["John and I","A"]," ",["hit off it","B"]," from the moment we ",["met in college","C"]," ",["five years ago","D"],"."], wrong:"B", fix:"hit it off"},
+  "9-2.mp3-2": {parts:[["Watch your steps","A"],", everyone! It's ",["dark","B"]," and ",["very slippery","C"]," ",["in here","D"],"."], wrong:"A", fix:"Watch your step"},
+  "9-2.mp3-3": {parts:[["Please","A"]," don't forget to ",["give my best regard to","B"]," ",["your","C"]," ",["father","D"],"."], wrong:"B", fix:"give my best regards to"},
+  "9-2.mp3-4": {parts:["“Oh, no! I forgot to bring the box.” “",["You kidding","A"],". We ",["don't have time","B"]," to ",["go back home","C"]," ",["to get it","D"],".”"], wrong:"A", fix:"You're kidding"},
+  "9-2.mp3-5": {parts:[["Our brain","A"]," is ",["especially","B"]," ",["susceptible for","C"]," temptation when we're ",["feeling bad or sad","D"],"."], wrong:"C", fix:"susceptible to"},
+  "9-2.mp3-6": {parts:["I'm afraid ",["what he's been saying","A"]," is ",["completely","B"]," ",["at odd with","C"]," ",["what he's been doing","D"],"."], wrong:"C", fix:"at odds with"},
+  "9-2.mp3-7": {parts:[["My father","A"]," is a ",["policeman","B"]," and ",["is committed for","C"]," the ",["safety and security","D"]," of society."], wrong:"C", fix:"is committed to"},
+  "9-2.mp3-8": {parts:[["Whether you love or hate it","A"],", ",["AI","B"]," is ",["definitely","C"]," ",["here to remain","D"],"."], wrong:"D", fix:"here to stay"},
+  "9-2.mp3-9": {parts:[["Those who have difficulty sleeping well","A"]," ",["are liable for","B"]," ",["wake up","C"]," in the ",["middle of the night","D"],"."], wrong:"B", fix:"are liable to"},
+  "9-2.mp3-10": {parts:[["The politician","A"]," who was ",["arrested for vote buying","B"]," seemed to have ",["been intent at","C"]," ",["reelection","D"],"."], wrong:"C", fix:"been intent on"},
+  "9-2.mp3-11": {parts:["I ",["was no match to","A"]," Makoto at ",["Japanese chess","B"],", and he ",["beat me","C"]," ",["in three games in a row","D"],"."], wrong:"A", fix:"was no match for"},
+  "9-2.mp3-12": {parts:["She's ",["very","A"]," ",["vulnerable for","B"]," criticism, so ",["don't say anything","C"]," ",["that might upset her further","D"],"."], wrong:"B", fix:"vulnerable to"},
+  "9-2.mp3-13": {parts:[["Any customer","A"]," who ",["comes in the store today","B"]," ",["is eligible to","C"]," ",["the discount","D"],"."], wrong:"C", fix:"is eligible for"},
+  "9-2.mp3-14": {parts:[["Although it lasts almost three hours","A"],", we ",["all agree","B"]," this movie ",["is worth to see","C"]," ",["many times","D"],"."], wrong:"C", fix:"is worth seeing"},
+  "9-2.mp3-15": {parts:["I'm ",["under the impression","A"]," that that guy ",["is out for","B"]," ",["make money","C"]," ",["at our expense","D"],"."], wrong:"B", fix:"is out to"},
+  "9-2.mp3-16": {parts:[["The topic","A"]," the speaker ",["talked on","B"]," was something I'm ",["very interested in","C"],", so I ",["was all ear","D"],"."], wrong:"D", fix:"was all ears"},
+  "9-2.mp3-17": {parts:[["At the news","A"]," that she'd ",["passed the entrance exam","B"],", she ",["was beside himself with","C"]," ",["joy","D"],"."], wrong:"C", fix:"was beside herself with"},
+  "9-2.mp3-18": {parts:[["I'm not good at math","A"],", so ",["probably","B"]," I'm ",["not cut out for be","C"]," ",["a scientist","D"],"."], wrong:"C", fix:"not cut out to be"},
+  "9-2.mp3-19": {parts:[["How long ago","A"]," was ",["it","B"]," that the ",["Harry Potter novels","C"]," ",["were all the rages","D"],"?"], wrong:"D", fix:"were all the rage"},
+  "9-2.mp3-20": {parts:[["The study","A"]," was ",["unable","B"]," to ",["account of","C"]," ",["the effects of stressful events on emotion","D"],"."], wrong:"C", fix:"account for"},
+  "9-3.mp3-1": {parts:[["A research study has","A"]," ",["found that habits","B"]," ",["account of","C"]," ",["about 40 percent of our daily behaviors.","D"]], wrong:"C", fix:"account for"},
+  "9-3.mp3-2": {parts:[["Moving around the world","A"]," ",["allows to","B"]," ",["a new way","C"]," ",["of seeing things.","D"]], wrong:"B", fix:"allows for"},
+  "9-3.mp3-3": {parts:[["We wanted at least 100,000 yen","A"]," ",["for the project, but had to","B"]," ",["settle with","C"]," ",["80,000 yen.","D"]], wrong:"C", fix:"settle for"},
+  "9-3.mp3-4": {parts:[["On a long autumn night, many people","A"]," ",["yearn to","B"]," ",["the hometown they left","C"]," ",["a long time ago.","D"]], wrong:"B", fix:"yearn for"},
+  "9-3.mp3-5": {parts:[["Yamada's knowledge of chemistry","A"]," ",["counted on for","B"]," ",["a great deal in","C"]," ",["his new position.","D"]], wrong:"B", fix:"counted for"},
+  "9-3.mp3-6": {parts:[["To help","A"]," ",["cope for","B"]," ",["their daily stress, many","C"]," ",["people take up yoga.","D"]], wrong:"B", fix:"cope with"},
+  "9-3.mp3-7": {parts:[["We arranged our","A"]," ",["trip to","B"]," ",["coincide to","C"]," ",["the start of baseball season.","D"]], wrong:"C", fix:"coincide with"},
+  "9-3.mp3-8": {parts:[["Needless to say, everybody who","A"]," ",["opens a business has to","B"]," ",["comply to","C"]," ",["the law.","D"]], wrong:"C", fix:"comply with"},
+  "9-3.mp3-9": {parts:[["I think","A"]," ",["she can","B"]," ",["dispense of","C"]," ",["any more advice.","D"]], wrong:"C", fix:"dispense with"},
+  "9-3.mp3-10": {parts:[["Katy took a few","A"]," ",["days off to","B"]," ",["attend for","C"]," ",["her personal matters.","D"]], wrong:"C", fix:"attend to"},
+  "9-3.mp3-11": {parts:[["As a girl, Eri","A"]," ",["aspired for","B"]," ",["a career in medicine, but","C"]," ",["changed her mind later.","D"]], wrong:"B", fix:"aspired to"},
+  "9-3.mp3-12": {parts:[["After two months of intense struggle, it","A"]," ",["seemed as if he'd decided to","B"]," ",["submit for","C"]," ",["his fate.","D"]], wrong:"C", fix:"submit to"},
+  "9-3.mp3-13": {parts:[["If they had been asked","A"]," ",["individually nobody would have","B"]," ",["consented for","C"]," ",["this crazy proposal.","D"]], wrong:"C", fix:"consented to"},
+  "9-3.mp3-14": {parts:[["Today many","A"]," ",["ordinary people","B"]," ",["deal on","C"]," ",["stocks via the internet.","D"]], wrong:"C", fix:"deal in"},
+  "9-3.mp3-15": {parts:[["We won't be able to","A"]," ",["reach a consensus if he","B"]," ",["persists on","C"]," ",["his demand.","D"]], wrong:"C", fix:"persists in"},
+  "9-3.mp3-16": {parts:[["Alex is now able to","A"]," ",["indulge on","B"]," ",["her favorite hobby, knitting, because","C"]," ",["she retired last month.","D"]], wrong:"B", fix:"indulge in"},
+  "9-3.mp3-17": {parts:[["To deal with the","A"]," ",["shrinking workforce, Japan has","B"]," ",["embarked in","C"]," ",["what is called a robot revolution.","D"]], wrong:"C", fix:"embarked on"},
+  "9-3.mp3-18": {parts:[["I'd like to","A"]," ",["dwell in","B"]," ",["this point further because","C"]," ",["it's so important.","D"]], wrong:"B", fix:"dwell on"},
+  "9-3.mp3-19": {parts:[["It is futile to","A"]," ",["dwell in","B"]," ",["the problems of today; instead, let's","C"]," ",["try to have unlimited optimism.","D"]], wrong:"B", fix:"dwell on"},
+  "9-3.mp3-20": {parts:[["The succession of late","A"]," ",["nights was beginning to","B"]," ",["tell in","C"]," ",["his health.","D"]], wrong:"C", fix:"tell on"},
+  "9-4.mp3-1": {parts:[["We should","A"]," ",["refrain of","B"]," ",["talking loudly here in the","C"]," ",["middle of the night.","D"]], wrong:"B", fix:"refrain from"},
+  "9-4.mp3-2": {parts:[["This author writes in her book","A"]," ",["about her experience of being","B"]," ",["discriminated for","C"]," ",["as a child.","D"]], wrong:"C", fix:"discriminated against"},
+  "9-4.mp3-3": {parts:[["Once you've signed a contract","A"]," ",["with anyone, you're supposed to","B"]," ",["abide with","C"]," ",["it to the letter.","D"]], wrong:"C", fix:"abide by"},
+  "9-4.mp3-4": {parts:[["We'd thought the preparations were","A"]," ",["perfect, but things didn't","B"]," ",["work off","C"]," ",["the way we'd expected.","D"]], wrong:"C", fix:"work out"},
+  "9-4.mp3-5": {parts:[["James wishes to stay","A"]," ",["in good shape and","B"]," ",["works off","C"]," ",["at a gym three times per week.","D"]], wrong:"C", fix:"works out"},
+  "9-4.mp3-6": {parts:[["The police","A"]," ",["ruled off","B"]," ",["the possibility that the robber might","C"]," ",["have entered through the window.","D"]], wrong:"B", fix:"ruled out"},
+  "9-4.mp3-7": {parts:[["The investigative committee","A"]," ",["singled off","B"]," ",["the direct cause","C"]," ",["of the incident.","D"]], wrong:"B", fix:"singled out"},
+  "9-4.mp3-8": {parts:[["Father","A"]," ",["passed off","B"]," ",["last night and was rushed","C"]," ",["to the hospital by ambulance.","D"]], wrong:"B", fix:"passed out"},
+  "9-4.mp3-9": {parts:[["Jim said I","A"]," ",["missed out to","B"]," ",["something interesting by not going","C"]," ",["with him to the exhibition.","D"]], wrong:"B", fix:"missed out on"},
+  "9-4.mp3-10": {parts:[["I think it's","A"]," ",["almost time to","B"]," ",["wind off","C"]," ",["this meeting.","D"]], wrong:"C", fix:"wind up"},
+  "9-4.mp3-11": {parts:[["I went into a vegetable patch and","A"]," ",["pulled off","B"]," ",["a carrot, but it looked","C"]," ",["too small for anything.","D"]], wrong:"B", fix:"pulled up"},
+  "9-4.mp3-12": {parts:[["Our minibus","A"]," ",["pulled off","B"]," ",["in front of a small office","C"]," ",["building on a busy commercial street.","D"]], wrong:"B", fix:"pulled up"},
+  "9-4.mp3-13": {parts:[["After he'd tried several","A"]," ",["times, Jim finally","B"]," ",["threw off","C"]," ",["his hands and gave up the attempt.","D"]], wrong:"C", fix:"threw up"},
+  "9-4.mp3-14": {parts:[["Hiro became sick soon","A"]," ",["after dinner and had","B"]," ",["thrown off","C"]," ",["several times by midnight.","D"]], wrong:"C", fix:"thrown up"},
+  "9-4.mp3-15": {parts:[["The law decrees that","A"]," ",["dogs running loose be","B"]," ",["rounded off","C"]," ",["for the safety of the public.","D"]], wrong:"C", fix:"rounded up"},
+  "9-4.mp3-16": {parts:[["This detective story","A"]," ",["caught up","B"]," ",["probably because its ending","C"]," ",["is really surprising.","D"]], wrong:"B", fix:"caught on"},
+  "9-4.mp3-17": {parts:[["It took a","A"]," ",["minute before I","B"]," ",["caught up to","C"]," ",["what he meant by his joke.","D"]], wrong:"C", fix:"caught on to"},
+  "9-4.mp3-18": {parts:[["You're utterly mistaken if you thought","A"]," ",["you could cheat on exams and","B"]," ",["get away for","C"]," ",["it.","D"]], wrong:"C", fix:"get away with"},
+  "9-4.mp3-19": {parts:[["Today's newspaper says someone","A"]," ",["got away for","B"]," ",["three million yen from","C"]," ",["a nearby supermarket.","D"]], wrong:"B", fix:"got away with"},
+  "9-4.mp3-20": {parts:[["In the interview, the politician","A"]," ",["shied away of","B"]," ",["any question concerning","C"]," ",["his private life.","D"]], wrong:"B", fix:"shied away from"},
+  "9-5.mp3-1": {parts:[["I had to kill a couple of","A"]," ",["hours the other day, so I","B"]," ",["hung about with","C"]," ",["in a park nearby.","D"]], wrong:"C", fix:"hung around"},
+  "9-5.mp3-2": {parts:[["Let's","A"]," ",["get down on","B"]," ",["business: there's a lot of","C"]," ",["work to do today.","D"]], wrong:"B", fix:"get down to"},
+  "9-5.mp3-3": {parts:[["He felt","A"]," ",["let off","B"]," ",["when she failed to","C"]," ",["do what she'd promised.","D"]], wrong:"B", fix:"let down"},
+  "9-5.mp3-4": {parts:[["It must have taken a lot","A"]," ",["of organization and hard work to","B"]," ",["pull out","C"]," ",["such a big party.","D"]], wrong:"C", fix:"pull off"},
+  "9-5.mp3-5": {parts:[["Yui","A"]," ",["followed through for","B"]," ",["the promise to return","C"]," ",["home by ten.","D"]], wrong:"B", fix:"followed through on"},
+  "9-5.mp3-6": {parts:[["He says he often","A"]," ",["finds him","B"]," ",["thinking of the woman he parted","C"]," ",["from a long time ago.","D"]], wrong:"B", fix:"finds himself"},
+  "9-5.mp3-7": {parts:[["Every chef dreams of","A"]," ",["great produce, but most","B"]," ",["make do for","C"]," ",["what is available on the market.","D"]], wrong:"C", fix:"make do with"},
+  "9-5.mp3-8": {parts:[["I'm sure he'll","A"]," ",["make well","B"]," ",["in his","C"]," ",["new job.","D"]], wrong:"B", fix:"make good"},
+  "9-5.mp3-9": {parts:[["In a year, his landlady","A"]," ",["made good on","B"]," ",["her warning and evicted","C"]," ",["him from his room.","D"]], wrong:"B", fix:"made good"},
+  "9-5.mp3-10": {parts:[["With prices rising, it is","A"]," ",["becoming harder for anyone to","B"]," ",["make end meet","C"]," ",["these days.","D"]], wrong:"C", fix:"make ends meet"},
+  "9-5.mp3-11": {parts:[["As a small child, Fred liked to","A"]," ",["make belief","B"]," ",["he was a ninja","C"]," ",["on a secret mission.","D"]], wrong:"B", fix:"make believe"},
+  "9-5.mp3-12": {parts:[["Patients tend to","A"]," ",["take it as granted that","B"]," ",["a doctor knows everything,","C"]," ",["but does he?","D"]], wrong:"B", fix:"take it for granted that"},
+  "9-5.mp3-13": {parts:[["Our big mistake was that we","A"]," ",["hadn't taken the traffic conditions","B"]," ",["into accounts","C"]," ",[".","D"]], wrong:"C", fix:"into account"},
+  "9-5.mp3-14": {parts:[["The teacher","A"]," ",["took hold on","B"]," ",["of the child's hand and led","C"]," ",["her gently into the classroom.","D"]], wrong:"B", fix:"took hold"},
+  "9-5.mp3-15": {parts:[["The employer","A"]," ",["took no notices","B"]," ",["of his manager's advice","C"]," ",["and made a mistake.","D"]], wrong:"B", fix:"took no notice"},
+  "9-5.mp3-16": {parts:[["The revised law","A"]," ",["concerning privacy","B"]," ",["took an effect","C"]," ",["on January 1 this year.","D"]], wrong:"C", fix:"took effect"},
+  "9-5.mp3-17": {parts:[["In half an hour, the","A"]," ",["medicine he took began to","B"]," ",["take an effect","C"]," ",[".","D"]], wrong:"C", fix:"take effect"},
+  "9-6.mp3-1": {parts:[["Koji seems to be","A"]," ",["taking great pain","B"]," ",["to avoid meeting Ryota","C"]," ",["face to face.","D"]], wrong:"B", fix:"taking great pains"},
+  "9-6.mp3-2": {parts:[["His mother told him to","A"]," ",["keep tracks of","B"]," ",["all the money he spent","C"]," ",["while he was traveling.","D"]], wrong:"B", fix:"keep track of"},
+  "9-6.mp3-3": {parts:[["She asked me to","A"]," ",["keep her companion","B"]," ",["until her parents","C"]," ",["came home.","D"]], wrong:"B", fix:"keep her company"},
+  "9-6.mp3-4": {parts:[["My father always reads","A"]," ",["a newspaper attentively to","B"]," ",["keep abreast to","C"]," ",["economic trends.","D"]], wrong:"C", fix:"keep abreast of"},
+  "9-6.mp3-5": {parts:[["Mary","A"]," ",["let go off","B"]," ",["her mother's hand when they were skating,","C"]," ",["and then she had a fall.","D"]], wrong:"B", fix:"let go of"},
+  "9-6.mp3-6": {parts:[["It's not so easy","A"]," ",["for new companies to","B"]," ",["live up for","C"]," ",["customers' expectations.","D"]], wrong:"C", fix:"live up to"},
+  "9-6.mp3-7": {parts:[["He couldn't have","A"]," ",["looked her straight in the eyes","B"]," ",["if he'd had any","C"]," ",["evil intent on her.","D"]], wrong:"B", fix:"looked her straight in the eye"},
+  "9-6.mp3-8": {parts:[["To try to empathize with","A"]," ",["others —this basic rule","B"]," ",["holds truth","C"]," ",["no matter what our belief is.","D"]], wrong:"C", fix:"holds true"},
+  "9-6.mp3-9": {parts:[["He's trying hard to","A"]," ",["come to term with","B"]," ",["the earlier life","C"]," ",["he'd lived recklessly.","D"]], wrong:"B", fix:"come to terms with"},
+  "9-6.mp3-10": {parts:[["It","A"]," ",["came to lights","B"]," ",["that some athletes had been","C"]," ",["gambling at illegal casinos.","D"]], wrong:"B", fix:"came to light"},
+  "9-6.mp3-11": {parts:[["In most countries of","A"]," ",["the world, people legally","B"]," ",["come of ages","C"]," ",["at 18.","D"]], wrong:"C", fix:"come of age"},
+  "9-6.mp3-12": {parts:[["She studied Chinese, assuming a","A"]," ",["knowledge of it would","B"]," ",["come in hand","C"]," ",["for getting a job.","D"]], wrong:"C", fix:"come in handy"},
+  "9-6.mp3-13": {parts:[["We did our best to","A"]," ",["succeed, but the project","B"]," ",["fell short for","C"]," ",["our goal.","D"]], wrong:"C", fix:"fell short of"},
+  "9-6.mp3-14": {parts:[["Knowing a few words of","A"]," ",["the country you travel to","B"]," ",["goes long way","C"]," ",["to make your trip more enjoyable.","D"]], wrong:"C", fix:"goes a long way"},
+  "9-6.mp3-15": {parts:[["By signing an unfair","A"]," ",["contract, the boss","B"]," ",["paved a way for","C"]," ",["the bankruptcy of his company.","D"]], wrong:"C", fix:"paved the way for"},
+  "9-6.mp3-16": {parts:[["The ability to","A"]," ",["create knowledge and","B"]," ",["put it to a good use","C"]," ",["is the key characteristic of humans.","D"]], wrong:"C", fix:"put it to good use"},
+  "9-6.mp3-17": {parts:[["It","A"]," ",["stands for reason","B"]," ",["that children should be independent of","C"]," ",["their parents after a certain age.","D"]], wrong:"B", fix:"stands to reason"},
+};
+// ===================== ユーティリティ =====================
+function $(s){ return document.querySelector(s); }
+function el(tag, cls, text){ const e=document.createElement(tag); if(cls) e.className=cls; if(text!==undefined) e.textContent=text; return e; }
+function shuffle(arr){ const a=arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function norm(s){ return s.toLowerCase().replace(/[.,!?"'\u201c\u201d]/g,'').replace(/\s+/g,' ').trim(); }
+function parseTime(t){ const p=t.split('.'); return (parseInt(p[0],10)*60)+parseInt(p[1],10)+(parseInt(p[2],10)/10); }
+function makeBlank(sent, idiom){
+  const idx = sent.indexOf(idiom);
+  if(idx<0) return {before:sent, after:""};
+  return {before: sent.slice(0,idx), after: sent.slice(idx+idiom.length)};
+}
+
+const audioEl = $('#clip');
+let stopAt = null;
+let currentAudioFile = null;
+audioEl.addEventListener('timeupdate', ()=>{
+  if(stopAt!==null && audioEl.currentTime >= stopAt){ audioEl.pause(); stopAt=null; }
+});
+function playClip(file, startStr, endStr, btn){
+  const s = parseTime(startStr), e = parseTime(endStr);
+  const doPlay = ()=>{
+    audioEl.currentTime = s; stopAt = e;
+    const p = audioEl.play();
+    if(p && p.catch) p.catch(()=>{
+      if(btn){ btn.textContent = '\u26a0\ufe0f ' + file + ' \u3092HTML\u3068\u540c\u3058\u30d5\u30a9\u30eb\u30c0\u306b\u7f6e\u3044\u3066\u304f\u3060\u3055\u3044'; }
+    });
+  };
+  if(currentAudioFile !== file){
+    currentAudioFile = file;
+    audioEl.src = file;
+    audioEl.addEventListener('loadedmetadata', doPlay, {once:true});
+    audioEl.load();
+  } else {
+    doPlay();
+  }
+}
+
+// ===================== 状態 =====================
+const TYPES = ['A','B','C','D','E'];
+const TYPE_LABEL = {A:'4\u629e', B:'\u9069\u8a9e\u88dc\u5145\uff08\u9078\u629e\uff09', C:'\u9069\u8a9e\u88dc\u5145\uff08\u8a18\u8ff0\uff09', D:'\u30c7\u30a3\u30af\u30c6\u30fc\u30b7\u30e7\u30f3', E:'\u8aa4\u6587\u8a02\u6b63'};
+const TIMED_TYPES = {A:true,B:true,C:true,E:true};
+
+let session = [];
+let current = 0;
+let correct = 0, wrong = 0;
+let answered = false;
+let TOTAL = 0;
+let timerId = null;
+let timeLeft = TIME_LIMIT;
+
+function buildSession(){
+  // 114問のプールから毎回ランダムに20問を抽出し、それぞれにランダムな出題形式を割り当てる
+  const picked = shuffle(ITEMS).slice(0, QUESTIONS_PER_TEST);
+  session = picked.map(item=>{
+    const type = TYPES[Math.floor(Math.random()*TYPES.length)];
+    return { type, item, err: ERROR_ITEMS[item.id] };
+  });
+  TOTAL = session.length;
+  current = 0; correct = 0; wrong = 0;
+}
+
+function startSession(){
+  buildSession();
+  renderQuestion();
+}
+
+function updateHeader(){
+  $('#sc-ok').textContent = correct;
+  $('#sc-ng').textContent = wrong;
+  $('#sc-pos').textContent = (current+1) + ' / ' + TOTAL + ' \u554f';
+  $('#pfill').style.width = Math.round((current)/TOTAL*100) + '%';
+}
+
+// ===================== タイマー =====================
+const RING_R = 27, RING_C = 2*Math.PI*RING_R;
+function buildTimerUI(){
+  const box = el('div');
+  const wrap = el('div','timer-ring-wrap');
+  wrap.id = 'timer-wrap';
+  wrap.innerHTML = '<svg viewBox="0 0 60 60">'+
+    '<circle class="timer-ring-bg" cx="30" cy="30" r="'+RING_R+'"></circle>'+
+    '<circle class="timer-ring-fg" id="timer-fg" cx="30" cy="30" r="'+RING_R+'" '+
+    'stroke-dasharray="'+RING_C+'" stroke-dashoffset="0"></circle></svg>'+
+    '<div class="timer-num" id="timer-num">'+TIME_LIMIT+'</div>';
+  box.appendChild(wrap);
+  box.appendChild(el('div','timer-caption','\u5236\u9650\u6642\u9593'));
+  return box;
+}
+function startTimer(){
+  stopTimer();
+  timeLeft = TIME_LIMIT;
+  const fg = $('#timer-fg'), num = $('#timer-num'), wrapEl = $('#timer-wrap');
+  if(!fg) return;
+  fg.style.strokeDashoffset = '0';
+  num.textContent = timeLeft;
+  timerId = setInterval(()=>{
+    timeLeft--;
+    if(num) num.textContent = Math.max(timeLeft,0);
+    if(fg) fg.style.strokeDashoffset = String(RING_C*(1-timeLeft/TIME_LIMIT));
+    if(wrapEl) wrapEl.classList.toggle('low', timeLeft<=5);
+    if(timeLeft<=0){
+      stopTimer();
+      onTimeout();
+    }
+  },1000);
+}
+function stopTimer(){ if(timerId){ clearInterval(timerId); timerId=null; } }
+function onTimeout(){
+  if(answered) return;
+  const t = session[current].type;
+  if(t==='A' || t==='B'){
+    document.querySelectorAll('.choice-btn').forEach(b=>b.disabled=true);
+  }
+  finishAnswer(false, [], null, true);
+}
+
+// ===================== 描画: 各問題形式共通の骨組み =====================
+function renderQuestion(){
+  answered = false;
+  updateHeader();
+  const main = $('#main');
+  main.innerHTML = '';
+  const card = el('div','qcard');
+  const q = session[current];
+  const type = q.type;
+
+  const meta = el('div','qmeta');
+  const left = el('div','qmeta-left');
+  left.appendChild(el('span','qnum', 'Q' + (current+1) + ' / ' + TOTAL));
+  left.appendChild(el('span','qtype-badge qtype-'+type, TYPE_LABEL[type]));
+  meta.appendChild(left);
+  if(TIMED_TYPES[type]) meta.appendChild(buildTimerUI());
+  card.appendChild(meta);
+
+  const audioBtn = el('button','audio-btn','\u25b6\ufe0f \u97f3\u58f0\u3092\u518d\u751f');
+  audioBtn.onclick = ()=>{ playClip(q.item.file, q.item.start, q.item.end, audioBtn); };
+  card.appendChild(audioBtn);
+
+  if(type === 'A') renderA(card, q.item);
+  else if(type === 'B') renderB(card, q.item);
+  else if(type === 'C') renderC(card, q.item);
+  else if(type === 'D') renderD(card, q.item);
+  else if(type === 'E') renderE(card, q.item, q.err);
+
+  main.appendChild(card);
+  if(TIMED_TYPES[type]) startTimer();
+}
+
+// ---- A: 4択（熟語そのものを選ぶ） ----
+function renderA(card, q){
+  const bl = makeBlank(q.sent, q.idiom);
+  const sentWrap = el('div','sentence');
+  sentWrap.appendChild(document.createTextNode(bl.before));
+  const gap = el('span','blank-input','\uff08\u3000\u3000\uff1f\u3000\u3000\uff09');
+  sentWrap.appendChild(gap);
+  sentWrap.appendChild(document.createTextNode(bl.after));
+  card.appendChild(sentWrap);
+
+  const opts = shuffle([q.idiom, ...q.wrong]);
+  const choicesWrap = el('div','choices');
+  const btns = [];
+  opts.forEach(opt=>{
+    const b = el('button','choice-btn', opt);
+    b.onclick = ()=>{
+      if(answered) return;
+      stopTimer();
+      btns.forEach(x=>x.classList.remove('selected'));
+      b.classList.add('selected');
+      finishAnswer(opt === q.idiom, [q.idiom], ()=>{
+        btns.forEach(x=>{
+          x.disabled = true;
+          if(x.textContent === q.idiom) x.classList.add('correct-choice');
+          else if(x.classList.contains('selected')) x.classList.add('wrong-choice');
+        });
+      });
+    };
+    btns.push(b);
+    choicesWrap.appendChild(b);
+  });
+  card.appendChild(choicesWrap);
+  appendFeedbackArea(card, q);
+}
+
+// ---- B: 適語補充（選択式） ----
+function renderB(card, q){
+  const bl = makeBlank(q.sent, q.idiom);
+  const sentWrap = el('div','sentence');
+  sentWrap.appendChild(document.createTextNode(bl.before));
+  const gap = el('span','blank-input','\uff08\u3000\u3000\uff1f\u3000\u3000\uff09');
+  sentWrap.appendChild(gap);
+  sentWrap.appendChild(document.createTextNode(bl.after));
+  card.appendChild(sentWrap);
+
+  const opts = shuffle([q.idiom, ...q.wrong]);
+  const choicesWrap = el('div','choices');
+  const btns = [];
+  opts.forEach(opt=>{
+    const b = el('button','choice-btn', opt);
+    b.onclick = ()=>{
+      if(answered) return;
+      stopTimer();
+      btns.forEach(x=>x.classList.remove('selected'));
+      b.classList.add('selected');
+      finishAnswer(opt === q.idiom, [q.idiom], ()=>{
+        btns.forEach(x=>{
+          x.disabled = true;
+          if(x.textContent === q.idiom) x.classList.add('correct-choice');
+          else if(x.classList.contains('selected')) x.classList.add('wrong-choice');
+        });
+      });
+    };
+    btns.push(b);
+    choicesWrap.appendChild(b);
+  });
+  card.appendChild(choicesWrap);
+  appendFeedbackArea(card, q);
+}
+
+// ---- C: 適語補充（記述式） ----
+function renderC(card, q){
+  const instr = el('div','err-hint','\u65e5\u672c\u8a9e\u306e\u610f\u5473\u3092\u8868\u3059\u3088\u3046\u306b\u3001\u7a7a\u6240\u306b\u82f1\u8a9e\u3092\u5165\u308c\u306a\u3055\u3044\u3002');
+  card.appendChild(instr);
+  const hint = el('div','explain-box show');
+  hint.innerHTML = '<b>\u65e5\u672c\u8a9e\u306e\u610f\u5473</b>\uff1a' + q.meaning;
+  card.appendChild(hint);
+
+  const bl = makeBlank(q.sent, q.idiom);
+  const sentWrap = el('div','sentence');
+  sentWrap.appendChild(document.createTextNode(bl.before));
+  const inp = document.createElement('input');
+  inp.className = 'blank-fill'; inp.autocomplete='off'; inp.placeholder='...';
+  inp.style.width = Math.max(90,(q.idiom.length*11))+'px';
+  sentWrap.appendChild(inp);
+  sentWrap.appendChild(document.createTextNode(bl.after));
+  card.appendChild(sentWrap);
+
+  const actions = el('div','actions');
+  const submitBtn = el('button','btn btn-submit','\u89e3\u7b54\u3059\u308b');
+  submitBtn.onclick = ()=>{
+    if(answered) return;
+    stopTimer();
+    const ok = norm(inp.value) === norm(q.idiom);
+    finishAnswer(ok, [q.idiom], ()=>{
+      inp.disabled = true;
+      inp.classList.add(ok?'correct':'wrong');
+      if(!ok) inp.value = q.idiom;
+    });
+  };
+  actions.appendChild(submitBtn);
+  card.appendChild(actions);
+  inp.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); if(!answered) submitBtn.click(); } });
+  appendFeedbackArea(card, q);
+}
+
+// ---- D: ディクテーション（記述式・音声あり／タイマーなし） ----
+function renderD(card, q){
+  const ta = document.createElement('textarea');
+  ta.className = 'dict-textarea';
+  ta.placeholder = '\u8074\u3053\u3048\u305f\u82f1\u6587\u3092\u305d\u306e\u307e\u307e\u5165\u529b...';
+  card.appendChild(ta);
+
+  const actions = el('div','actions');
+  const submitBtn = el('button','btn btn-submit','\u89e3\u7b54\u3059\u308b');
+  submitBtn.onclick = ()=>{
+    if(answered) return;
+    const ok = norm(ta.value) === norm(q.sent);
+    finishAnswer(ok, [q.sent], ()=>{
+      ta.disabled = true;
+      ta.classList.add(ok?'correct':'wrong');
+    });
+  };
+  actions.appendChild(submitBtn);
+  card.appendChild(actions);
+  appendFeedbackArea(card, q);
+}
+
+// ---- E: 誤文訂正 ----
+function renderE(card, q, err){
+  const hint = el('div','err-hint','\u4e0b\u7dda\u90e8(A)\u301c(D)\u306e\u4e2d\u304b\u3089\u8aa4\u308a\u30921\u3064\u9078\u3073\u3001\u6b63\u3057\u3044\u5f62\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044\u3002');
+  card.appendChild(hint);
+
+  const sentWrap = el('div','sentence');
+  let selectedTag = null;
+  const spans = {};
+  err.parts.forEach(part=>{
+    if(Array.isArray(part)){
+      const [text, tag] = part;
+      const span = document.createElement('span');
+      span.className = 'eu';
+      const tagEl = document.createElement('span');
+      tagEl.className = 'eu-tag';
+      tagEl.textContent = '(' + tag + ')';
+      span.appendChild(tagEl);
+      span.appendChild(document.createTextNode(text));
+      span.onclick = ()=>{
+        if(answered) return;
+        Object.values(spans).forEach(s=>s.classList.remove('selected'));
+        span.classList.add('selected');
+        selectedTag = tag;
+      };
+      spans[tag] = span;
+      sentWrap.appendChild(span);
+    } else {
+      sentWrap.appendChild(document.createTextNode(part));
+    }
+  });
+  card.appendChild(sentWrap);
+
+  const fixRow = el('div','err-fix-row');
+  const fixLabel = el('span','err-fix-label','\u6b63\u3057\u3044\u5f62\uff1a');
+  const fixInput = document.createElement('input');
+  fixInput.autocomplete = 'off'; fixInput.placeholder = '\u4f8b: take a good look at';
+  fixRow.appendChild(fixLabel); fixRow.appendChild(fixInput);
+  card.appendChild(fixRow);
+
+  const actions = el('div','actions');
+  const submitBtn = el('button','btn btn-submit','\u89e3\u7b54\u3059\u308b');
+  submitBtn.onclick = ()=>{
+    if(answered) return;
+    if(!selectedTag){ alert('\u8aa4\u308a\u306e\u7b87\u6240\u3092\u30af\u30ea\u30c3\u30af\u3057\u3066\u9078\u3093\u3067\u304f\u3060\u3055\u3044\u3002'); return; }
+    stopTimer();
+    const tagOk = selectedTag === err.wrong;
+    const fixOk = norm(fixInput.value) === norm(err.fix);
+    const ok = tagOk && fixOk;
+    finishAnswer(ok, [ '(' + err.wrong + ') \u2192 ' + err.fix ], ()=>{
+      Object.entries(spans).forEach(([tag, s])=>{
+        s.classList.add('locked');
+        if(tag === err.wrong) s.classList.add('correct-span');
+      });
+      fixInput.disabled = true;
+      if(!fixOk) fixInput.value = err.fix;
+    });
+  };
+  actions.appendChild(submitBtn);
+  card.appendChild(actions);
+  fixInput.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); if(!answered) submitBtn.click(); } });
+  appendFeedbackArea(card, q);
+}
+
+// ===================== 共通: 採点・フィードバック =====================
+function appendFeedbackArea(card, q){
+  const fb = el('div','feedback'); fb.id='fb';
+  card.appendChild(fb);
+  const ex = el('div','explain-box'); ex.id='explainBox';
+  let html = '<b>' + q.idiom + '</b>\uff1a' + q.meaning;
+  if(q.trans) html += '<br>\u8a33\uff1a' + q.trans;
+  if(q.note)  html += '<br>\u6ce8\u610f\u70b9\uff1a' + q.note;
+  ex.innerHTML = html;
+  card.appendChild(ex);
+  const bottomActions = el('div','actions'); bottomActions.id='bottomActions';
+  card.appendChild(bottomActions);
+}
+
+function finishAnswer(isCorrect, answerDisplayParts, lockUI, isTimeout){
+  answered = true;
+  stopTimer();
+  if(isCorrect) correct++; else wrong++;
+  if(lockUI) lockUI();
+
+  const fb = $('#fb');
+  fb.className = 'feedback ' + (isCorrect ? 'ok' : 'ng');
+  if(isTimeout){
+    fb.textContent = '\u23f0 \u6642\u9593\u5207\u308c\uff01' + (answerDisplayParts.length ? '\u3000\u6b63\u89e3\uff1a' + answerDisplayParts.join(' / ') : '');
+  } else {
+    fb.textContent = isCorrect ? '\u25ef \u6b63\u89e3\uff01' : ('\u2715 \u4e0d\u6b63\u89e3\u3002\u6b63\u89e3\uff1a' + answerDisplayParts.join(' / '));
+  }
+
+  const ex = $('#explainBox');
+  if(ex) ex.classList.add('show');
+
+  const bottomActions = $('#bottomActions');
+  const nextBtn = el('button','btn btn-next', current === TOTAL-1 ? '\u7d50\u679c\u3092\u898b\u308b' : '\u6b21\u306e\u554f\u984c\u3078');
+  nextBtn.onclick = nextQuestion;
+  bottomActions.appendChild(nextBtn);
+  updateHeader();
+}
+
+function nextQuestion(){
+  if(current < TOTAL-1){
+    current++;
+    renderQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function commentFor(score, total){
+  const pct = score/total;
+  if(score === total) return 'Perfect! \u5168\u554f\u6b63\u89e3\u3067\u3059\uff01';
+  if(pct >= 0.9) return 'Excellent! \u3068\u3066\u3082\u826f\u304f\u3067\u304d\u307e\u3057\u305f\uff01';
+  if(pct >= 0.75) return 'Very Good! \u9806\u8abf\u306b\u8eab\u306b\u3064\u3044\u3066\u3044\u307e\u3059\uff01';
+  if(pct >= 0.6) return 'Good! \u3082\u3046\u5c11\u3057\u3067\u5b8c\u74a7\u3067\u3059\uff01';
+  if(pct >= 0.4) return 'Keep Practicing! \u7e70\u308a\u8fd4\u3057\u5fa9\u7fd2\u3057\u307e\u3057\u3087\u3046\uff01';
+  return "Let's Review! \u719f\u8a9e\u3092\u3082\u3046\u4e00\u5ea6\u898b\u76f4\u3057\u307e\u3057\u3087\u3046\uff01";
+}
+
+function showResult(){
+  stopTimer();
+  $('#pfill').style.width = '100%';
+  $('#sc-pos').textContent = '\u5b8c\u4e86';
+  const main = $('#main');
+  main.innerHTML = '';
+  const wrap = el('div','result-wrap');
+  wrap.appendChild(el('div','result-score', correct + ' / ' + TOTAL));
+  wrap.appendChild(el('div','result-total','\u6b63\u89e3\u6570'));
+  wrap.appendChild(el('div','result-comment', commentFor(correct, TOTAL)));
+  const retryBtn = el('button','btn btn-submit','\u3082\u3046\u4e00\u5ea6\u6311\u6226\u3059\u308b\uff08\u554f\u984c\u306f\u5165\u308c\u66ff\u308f\u308a\u307e\u3059\uff09');
+  retryBtn.onclick = startSession;
+  wrap.appendChild(retryBtn);
+  main.appendChild(wrap);
+}
+
+// ===================== 初期化 =====================
+startSession();
+</script>
+</body>
+</html>
